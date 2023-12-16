@@ -1,0 +1,1 @@
+/usr/bin/g++ -g -rdynamic CMakeFiles/TallyLight.dir/main.cpp.o -o TallyLight 

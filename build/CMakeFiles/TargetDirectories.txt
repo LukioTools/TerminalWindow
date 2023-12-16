@@ -1,0 +1,5 @@
+/home/hiha/c++/TallylightSystem/build/CMakeFiles/main.dir
+/home/hiha/c++/TallylightSystem/build/CMakeFiles/package.dir
+/home/hiha/c++/TallylightSystem/build/CMakeFiles/package_source.dir
+/home/hiha/c++/TallylightSystem/build/CMakeFiles/edit_cache.dir
+/home/hiha/c++/TallylightSystem/build/CMakeFiles/rebuild_cache.dir

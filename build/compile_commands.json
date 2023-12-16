@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/hiha/c++/TallylightSystem/build",
+  "command": "/usr/bin/g++   -g -o CMakeFiles/main.dir/main.cpp.o -c /home/hiha/c++/TallylightSystem/main.cpp",
+  "file": "/home/hiha/c++/TallylightSystem/main.cpp",
+  "output": "CMakeFiles/main.dir/main.cpp.o"
+}
+]

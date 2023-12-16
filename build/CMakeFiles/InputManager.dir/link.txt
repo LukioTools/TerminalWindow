@@ -1,0 +1,1 @@
+/usr/bin/g++ -g -rdynamic CMakeFiles/InputManager.dir/inputManager.cpp.o -o InputManager 
