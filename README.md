@@ -1,0 +1,3 @@
+This is an "Library(s)" for c++ which includes inputmanager and window/screen manager/renderer for terminal. It's not ready nor will be ready :). You have to repleace some paths from Makefile for CMake to work. 
+Easiest way is to find all "/home/hiha/c++" and repleace those with path of your program. (yes the cmake configuration is almost generic so you can steal it too :9) 
+As I said this is not ready, and right now it's broken. This is just to make backup from it. I dunno why it's public. here's 🍪 if you have ended up here. Maybe you had great war between you and a bug or you just wanted to find something new. Neither way good luck with your journy. Sorry for not being helpful :)
