@@ -514,7 +514,7 @@ namespace WindowManager
 
         RenderElement Render(vector2 size) const override{
             RenderElement RE(size);
-            vector2 textStartPos((size.x/2)-(double)(text.length()/2), size.y/2);
+            vector2 textStartPos((size.x/2.0)-(double)(text.length()/2.0), size.y/2.0);
             
             for (int y = 0; y < size.y; y++)
             {

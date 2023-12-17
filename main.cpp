@@ -44,7 +44,6 @@ int main(int argc, char const *argv[])
 
     while (true)
     {
-
         screen.Render(WindowManager::vector2(20,20));
 
         InputManager::tick();
