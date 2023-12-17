@@ -38,9 +38,15 @@ int main(int argc, char const *argv[])
 
     //window.AddElement(text2);
     window.AddElement(text);
+    window.css = t1_css;
+
+    screen.push_back(&window);
 
     while (true)
     {
+
+        screen.Render(WindowManager::vector2(20,20));
+
         InputManager::tick();
 
         if (InputManager::GetKeyDown('q'))

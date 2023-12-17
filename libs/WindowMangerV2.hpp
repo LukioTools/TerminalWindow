@@ -322,7 +322,7 @@ namespace WindowManager
 
         virtual void ExtraParse(std::string css){}
 
-        virtual void ParseCss(std::string css){
+        virtual void ParseCss(){
             std::vector<std::string> lines;
             
             {
@@ -582,7 +582,8 @@ namespace WindowManager
         std::cout << std::flush;
     }
 
-    class Window{
+    class Window : Element{
+        public:
         // this stores elements and handles the placemant and position of them
         std::vector<Element *> elements;
         std::vector<RenderElement> renderElements;
@@ -593,9 +594,10 @@ namespace WindowManager
 
         vector2 position, size;
 
-        public:
-        Window() : bg(0,0,0){
+        void ParseCss() override{}
 
+
+        Window() : bg(0,0,0){
         }
 
         void AddElement(Element *element) {
@@ -613,24 +615,85 @@ namespace WindowManager
 
             for (int i = 0; i < elements.size(); i++)
             {
-                RenderElement e1 = elements[i]->Render(elements[i]->GetSize());
-                window = CombineRenderElements(window, e1, elements[0]->GetPosition());
+                elements[i]->ParseCss();
+            }
+            
+
+            for (int i = 0; i < elements.size(); i++)
+            {
+                vector2 siz, pos;
+                if (elements[i]->GetSize().x.u == UNIT::PERCENTAGE)
+                {
+                    siz.x = size.x/elements[i]->GetSize().x.v;
+                }else{
+                    siz.x = elements[i]->GetSize().x;
+                }
+
+                if (elements[i]->GetSize().y.u == UNIT::PERCENTAGE)
+                {
+                    siz.y = size.y/elements[i]->GetSize().x.v;
+                } else{
+                    siz.y = elements[i]->GetSize().x;
+                }
+
+                if (elements[i]->GetPosition().x.u == UNIT::PERCENTAGE)
+                {
+                    pos.x = size.y/elements[i]->GetPosition().x.v;
+                }else{
+                    pos.x = elements[i]->GetPosition().x;
+                }
+
+                if (elements[i]->GetPosition().y.u == UNIT::PERCENTAGE)
+                {
+                    pos.y = size.y/elements[i]->GetPosition().y.v;
+                }else{
+                    pos.y = elements[i]->GetPosition().y;
+                }
+                
+                
+
+                RenderElement e1 = elements[i]->Render(siz);
+                window = CombineRenderElements(window, e1, pos);
             }
             return window;
         }
 
     };
 
-    class Screen : public std::vector<Window>
+    class Screen : public std::vector<Window *>
     {
     private:
+        RenderElement oldScreen = RenderElement(vector2(0,0), 'a');
 
     public:
         Screen(/* args */) {}
-        ~Screen() {}
+       
+        void Render(vector2 size){
 
-        void Render(){
-            std::vector<Window> windows = *this;
+            if(oldScreen.size != size){
+                oldScreen = RenderElement(vector2(0,0));
+                CLEAR_TERMINAL();
+            }
+
+            //std::vector<Window> windows = *this;
+
+            RenderElement screen(size, ' ');
+
+            for (int i = 0; i < (*this).size(); i++)
+            {
+                (*this).at(i)->ParseCss();
+            }
+
+            for (int i = 0; i < this->size(); i++)
+            {
+                RenderElement e = (*this).at(i)->Render((*this).at(i)->size);
+                screen = CombineRenderElements(screen, e, (*this).at(i)->position);
+            }
+            
+            RenderToScreen(oldScreen, screen);
+                  
         }
+
+        ~Screen() {}
     };
 }
