@@ -63,8 +63,6 @@ namespace WindowManager
     };
 
     class Unit{
-
-
         public:
 
         double v;
@@ -110,8 +108,6 @@ namespace WindowManager
         Unit operator*(Unit o){
             return this->v * o.v;
         } 
-
-
         Unit operator/(Unit o){
             return this->v / o.v;
         } 
@@ -268,6 +264,14 @@ namespace WindowManager
             }   
         }
 
+        RenderElement(vector2 size, char defaultChar, Color::Rgb bg){
+            this->size = size;
+            for (int i = 0; i < size.x*size.y; i++)
+            {
+                screen.push_back(Pixel(defaultChar, bg));
+            }   
+        }
+
         RenderElement(RenderElement& r){
             screen = r.screen;
             size = r.size;
@@ -382,9 +386,12 @@ namespace WindowManager
              std::regex px(".*px;?");
              std::regex per(".*%;?");
 
+             clog << "top" << std::endl;
+
             size_t dd = css.find_first_of(':');
         
             if(std::regex_match(css, px)){
+                clog << "px" << std::endl;
                 size_t end = css.find("px");
                 u = Unit(std::stod(css.substr(dd+1, end-1)), UNIT::ABSOLUT);
             }
@@ -567,8 +574,10 @@ namespace WindowManager
         {
             for (int x = 0; x < oldScreen.size.x; x++)
             {
+                
                 if (!(oldScreen.GetPixel(vector2(x,y)) == newScreen.GetPixel(vector2(x,y))))
                 {
+
                     std::cout << MOVE_TO_COORDINATES(x,y);
                     std::cout << newScreen.GetPixel(vector2(x,y));
 
@@ -609,7 +618,7 @@ namespace WindowManager
         }
 
         RenderElement Render(vector2 size){
-            RenderElement window = RenderElement(size, ' ');
+            RenderElement window = RenderElement(size, ' ', bg);
 
             // Remember to make optimations for this, so if nothing moves it should not generate everything from start, only thigns tthat changes
 
@@ -671,7 +680,7 @@ namespace WindowManager
         void Render(vector2 size){
 
             if(oldScreen.size != size){
-                oldScreen = RenderElement(vector2(0,0));
+                oldScreen = RenderElement(vector2(size));
                 CLEAR_TERMINAL();
             }
 
@@ -686,6 +695,7 @@ namespace WindowManager
 
             for (int i = 0; i < this->size(); i++)
             {
+                
                 RenderElement e = (*this).at(i)->Render((*this).at(i)->size);
                 screen = CombineRenderElements(screen, e, (*this).at(i)->position);
             }

@@ -12,7 +12,8 @@ int main(int argc, char const *argv[])
 
     std::cout << enable_mouse(SET_X10_MOUSE) << std::flush;
 
-    std::string t1_css = "{position: relative; top: 5px; left: 10px}";
+    std::string t1_css = "{top: 2px;}";
+    //{position: relative; top: 0px; left: 0px}
     
     HIDE_CURSOR()
 
@@ -24,9 +25,9 @@ int main(int argc, char const *argv[])
 
     WindowManager::Text* text = new WindowManager::Text(1, "t1");
     text->SetCss(t1_css);
-    text->SetText("moi");
-    text->SetPosition(InputManager::vector2(20,2));
-    text->SetSize(InputManager::vector2(20,3));
+    text->SetText("1");
+    text->SetPosition(InputManager::vector2(1,1));
+    text->SetSize(WindowManager::vector2(1,1));
 
     WindowManager::Screen screen;
 
@@ -39,12 +40,15 @@ int main(int argc, char const *argv[])
     //window.AddElement(text2);
     window.AddElement(text);
     window.css = t1_css;
+    window.bg = Color::Rgb(255,255,255);
+    window.size = WindowManager::vector2(100, 5);
+    //window.position = WindowManager::vector2(10,0);
 
     screen.push_back(&window);
 
     while (true)
     {
-        screen.Render(WindowManager::vector2(20,20));
+        screen.Render(WindowManager::vector2(200,10));
 
         InputManager::tick();
 
