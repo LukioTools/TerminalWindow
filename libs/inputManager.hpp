@@ -1,7 +1,6 @@
 #pragma once
 
 #include <atomic>
-#include <curses.h>
 #include <iostream>
 #include <stdio.h>
 #include <termios.h>
@@ -166,7 +165,14 @@ void UpdateInputManager(){
 
 void InitializeInputManager(){
     noecho();
+    std::cout << enable_mouse(SET_X10_MOUSE) << std::flush;
     t1 = std::thread(UpdateInputManager);
+}
+
+void EndInputManager(){
+    running.store(false);
+    restore_terminal_settings();
+    std::cout << disable_mouse(SET_X10_MOUSE) << std::flush;
 }
 
 bool GetKeyDown(int k){

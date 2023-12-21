@@ -4,60 +4,51 @@
 #include <iostream>
 #include <unistd.h>
 
-#define HIDE_CURSOR() std::cout << "\033[?25l";
-#define SHOW_CURSOR() std::cout << "\033[?25h" << std::flush;
-
 int main(int argc, char const *argv[])
 {
-
-    std::cout << enable_mouse(SET_X10_MOUSE) << std::flush;
-
-    std::string t1_css = "{top: 2px;}";
-    //{position: relative; top: 0px; left: 0px}
-    
-    HIDE_CURSOR()
+    std::string t1_css = "{top: 0px; left: 0px; width: 50%; height: 100%;}";
+    std::string t2_css = "{top: 0px; left: 50%; width: 50%; height: 100%;}";
+    std::string window_css = "{top: 0px; left: 0px; width: 100%; height: 100%;}";
+    //{position: relative; top: 0px; left: 0px}   
 
     InputManager::InitializeInputManager();
+    WindowManager::InitializeWindowManager();
 
     InputManager::vector2 lastMousePos(0,0);
 
     WindowManager::Window window = WindowManager::Window();
 
     WindowManager::Text* text = new WindowManager::Text(1, "t1");
-    text->SetCss(t1_css);
+    //text->SetCss(t1_css);
     text->SetText("1");
-    text->SetPosition(InputManager::vector2(1,1));
-    text->SetSize(WindowManager::vector2(1,1));
+    text->SetCss(t1_css);
+
+    WindowManager::Text* text2 = new WindowManager::Text(1, "t1");
+    //text->SetCss(t1_css);
+    text2->SetText("1");
+    text->SetCss(t2_css);
 
     WindowManager::Screen screen;
-
-    //WindowManager::Text* text2 = new WindowManager::Text(1);
-    //text2->SetText("ma2");
-    //text2->SetPosition(InputManager::vector2(10,5));
-    //text2->SetSize(InputManager::vector2(20,3));
-
-
-    //window.AddElement(text2);
-    window.AddElement(text);
-    window.css = t1_css;
+    
+    window.id = "window";
+    window.SetCss(window_css);
     window.bg = Color::Rgb(255,255,255);
-    window.size = WindowManager::vector2(100, 5);
-    //window.position = WindowManager::vector2(10,0);
+
+    window.AddElement(text);
+    window.AddElement(text2);
 
     screen.push_back(&window);
 
     while (true)
     {
-        screen.Render(WindowManager::vector2(200,10));
+        screen.Render(WindowManager::ScreenSize());
 
         InputManager::tick();
 
         if (InputManager::GetKeyDown('q'))
         {
-            InputManager::running.store(false);
-            InputManager::restore_terminal_settings();
-            std::cout << disable_mouse(SET_X10_MOUSE) << std::flush;
-            SHOW_CURSOR()
+            InputManager::EndInputManager();
+            WindowManager::EndWindowManager();
             return 0;
         }
 

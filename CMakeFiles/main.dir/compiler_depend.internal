@@ -11,6 +11,8 @@ CMakeFiles/main.dir/main.cpp.o
  /usr/include/alloca.h
  /usr/include/asm-generic/errno-base.h
  /usr/include/asm-generic/errno.h
+ /usr/include/asm-generic/ioctl.h
+ /usr/include/asm-generic/ioctls.h
  /usr/include/c++/13/atomic
  /usr/include/c++/13/backward/binders.h
  /usr/include/c++/13/bit
@@ -184,7 +186,6 @@ CMakeFiles/main.dir/main.cpp.o
  /usr/include/c++/13/variant
  /usr/include/c++/13/vector
  /usr/include/ctype.h
- /usr/include/curses.h
  /usr/include/endian.h
  /usr/include/errno.h
  /usr/include/features-time64.h
@@ -192,9 +193,9 @@ CMakeFiles/main.dir/main.cpp.o
  /usr/include/libintl.h
  /usr/include/linux/close_range.h
  /usr/include/linux/errno.h
+ /usr/include/linux/ioctl.h
  /usr/include/locale.h
  /usr/include/math.h
- /usr/include/ncurses_dll.h
  /usr/include/pthread.h
  /usr/include/sched.h
  /usr/include/stdc-predef.h
@@ -203,11 +204,12 @@ CMakeFiles/main.dir/main.cpp.o
  /usr/include/stdlib.h
  /usr/include/termios.h
  /usr/include/time.h
- /usr/include/unctrl.h
  /usr/include/unistd.h
  /usr/include/wchar.h
  /usr/include/wctype.h
  /usr/include/x86_64-linux-gnu/asm/errno.h
+ /usr/include/x86_64-linux-gnu/asm/ioctl.h
+ /usr/include/x86_64-linux-gnu/asm/ioctls.h
  /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h
  /usr/include/x86_64-linux-gnu/bits/byteswap.h
  /usr/include/x86_64-linux-gnu/bits/confname.h
@@ -223,6 +225,8 @@ CMakeFiles/main.dir/main.cpp.o
  /usr/include/x86_64-linux-gnu/bits/fp-logb.h
  /usr/include/x86_64-linux-gnu/bits/getopt_core.h
  /usr/include/x86_64-linux-gnu/bits/getopt_posix.h
+ /usr/include/x86_64-linux-gnu/bits/ioctl-types.h
+ /usr/include/x86_64-linux-gnu/bits/ioctls.h
  /usr/include/x86_64-linux-gnu/bits/iscanonical.h
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h
  /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h
@@ -311,6 +315,7 @@ CMakeFiles/main.dir/main.cpp.o
  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h
  /usr/include/x86_64-linux-gnu/gnu/stubs.h
  /usr/include/x86_64-linux-gnu/sys/cdefs.h
+ /usr/include/x86_64-linux-gnu/sys/ioctl.h
  /usr/include/x86_64-linux-gnu/sys/select.h
  /usr/include/x86_64-linux-gnu/sys/single_threaded.h
  /usr/include/x86_64-linux-gnu/sys/ttydefaults.h

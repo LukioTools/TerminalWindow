@@ -24,7 +24,7 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 7,
+				"line" : 6,
 				"parent" : 0
 			}
 		]
@@ -57,14 +57,6 @@
 			{
 				"fragment" : "-rdynamic",
 				"role" : "flags"
-			},
-			{
-				"fragment" : "-lcurses",
-				"role" : "libraries"
-			},
-			{
-				"fragment" : "-lform",
-				"role" : "libraries"
 			}
 		],
 		"language" : "CXX"

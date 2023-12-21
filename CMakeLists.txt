@@ -1,9 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 
 project( main )
-find_package(Curses REQUIRED)
-include_directories(${CURSES_INCLUDE_DIR})
-include_directories( ${OpenCV_INCLUDE_DIRS} )
+#find_package(Curses REQUIRED)
+#include_directories(${CURSES_INCLUDE_DIR})
 add_executable( main main.cpp )
-target_link_libraries(main ${CURSES_LIBRARIES})
+#target_link_libraries(main ${CURSES_LIBRARIES})
 

@@ -10,6 +10,8 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
   /usr/include/alloca.h \
   /usr/include/asm-generic/errno-base.h \
   /usr/include/asm-generic/errno.h \
+  /usr/include/asm-generic/ioctl.h \
+  /usr/include/asm-generic/ioctls.h \
   /usr/include/c++/13/atomic \
   /usr/include/c++/13/backward/binders.h \
   /usr/include/c++/13/bit \
@@ -183,7 +185,6 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
   /usr/include/c++/13/variant \
   /usr/include/c++/13/vector \
   /usr/include/ctype.h \
-  /usr/include/curses.h \
   /usr/include/endian.h \
   /usr/include/errno.h \
   /usr/include/features-time64.h \
@@ -191,9 +192,9 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
   /usr/include/libintl.h \
   /usr/include/linux/close_range.h \
   /usr/include/linux/errno.h \
+  /usr/include/linux/ioctl.h \
   /usr/include/locale.h \
   /usr/include/math.h \
-  /usr/include/ncurses_dll.h \
   /usr/include/pthread.h \
   /usr/include/sched.h \
   /usr/include/stdc-predef.h \
@@ -202,11 +203,12 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
   /usr/include/stdlib.h \
   /usr/include/termios.h \
   /usr/include/time.h \
-  /usr/include/unctrl.h \
   /usr/include/unistd.h \
   /usr/include/wchar.h \
   /usr/include/wctype.h \
   /usr/include/x86_64-linux-gnu/asm/errno.h \
+  /usr/include/x86_64-linux-gnu/asm/ioctl.h \
+  /usr/include/x86_64-linux-gnu/asm/ioctls.h \
   /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h \
   /usr/include/x86_64-linux-gnu/bits/byteswap.h \
   /usr/include/x86_64-linux-gnu/bits/confname.h \
@@ -222,6 +224,8 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
   /usr/include/x86_64-linux-gnu/bits/fp-logb.h \
   /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
   /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
+  /usr/include/x86_64-linux-gnu/bits/ioctl-types.h \
+  /usr/include/x86_64-linux-gnu/bits/ioctls.h \
   /usr/include/x86_64-linux-gnu/bits/iscanonical.h \
   /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
   /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
@@ -310,6 +314,7 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
   /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs.h \
   /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/include/x86_64-linux-gnu/sys/ioctl.h \
   /usr/include/x86_64-linux-gnu/sys/select.h \
   /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
   /usr/include/x86_64-linux-gnu/sys/ttydefaults.h \
@@ -327,9 +332,13 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
 
 /usr/include/x86_64-linux-gnu/sys/single_threaded.h:
 
+/usr/include/x86_64-linux-gnu/sys/ioctl.h:
+
 /usr/include/x86_64-linux-gnu/sys/cdefs.h:
 
 /usr/include/x86_64-linux-gnu/gnu/stubs.h:
+
+/usr/include/x86_64-linux-gnu/c++/13/bits/time_members.h:
 
 /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h:
 
@@ -391,9 +400,7 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/types.h:
 
-/usr/include/c++/13/ctime:
-
-/usr/include/c++/13/deque:
+/usr/include/x86_64-linux-gnu/bits/time64.h:
 
 /usr/include/c++/13/cstdio:
 
@@ -475,21 +482,23 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:
 
-/usr/include/c++/13/bits/sstream.tcc:
-
 /usr/include/c++/13/cwctype:
 
 /usr/include/c++/13/ratio:
 
-/usr/include/c++/13/bits/stringfwd.h:
-
 /usr/include/c++/13/bits/stl_stack.h:
+
+/usr/include/c++/13/bits/stringfwd.h:
 
 /usr/include/c++/13/bits/this_thread_sleep.h:
 
 /usr/include/c++/13/bits/shared_ptr.h:
 
 /usr/include/x86_64-linux-gnu/bits/struct_mutex.h:
+
+/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h:
+
+/usr/include/c++/13/bits/string_view.tcc:
 
 /usr/include/c++/13/bits/stl_deque.h:
 
@@ -533,10 +542,6 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
 
 /usr/include/c++/13/system_error:
 
-/usr/include/c++/13/bits/string_view.tcc:
-
-/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h:
-
 /usr/include/c++/13/bits/ptr_traits.h:
 
 /usr/include/c++/13/bits/predefined_ops.h:
@@ -547,21 +552,9 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
 
 /usr/include/c++/13/bits/parse_numbers.h:
 
-/usr/include/c++/13/bits/cxxabi_forced.h:
+/usr/include/c++/13/bits/ostream_insert.h:
 
-/usr/include/x86_64-linux-gnu/bits/termios-c_oflag.h:
-
-/usr/include/c++/13/bits/erase_if.h:
-
-/usr/include/c++/13/ostream:
-
-/usr/include/c++/13/tr1/riemann_zeta.tcc:
-
-/usr/include/c++/13/bits/cpp_type_traits.h:
-
-/usr/include/x86_64-linux-gnu/bits/termios-baud.h:
-
-/usr/include/c++/13/bits/move.h:
+/usr/include/c++/13/bits/ostream.tcc:
 
 /usr/include/x86_64-linux-gnu/bits/endianness.h:
 
@@ -572,22 +565,6 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
 /usr/include/c++/13/bits/std_function.h:
 
 /usr/include/c++/13/bits/char_traits.h:
-
-/usr/include/c++/13/bits/stl_vector.h:
-
-/usr/include/x86_64-linux-gnu/c++/13/bits/time_members.h:
-
-/usr/include/ncurses_dll.h:
-
-/usr/include/c++/13/bits/stl_tempbuf.h:
-
-/usr/include/c++/13/bits/stl_tree.h:
-
-/usr/include/c++/13/bits/codecvt.h:
-
-/usr/include/c++/13/bits/regex.h:
-
-/usr/include/c++/13/backward/binders.h:
 
 /usr/include/c++/13/bits/stl_queue.h:
 
@@ -607,6 +584,10 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
 
 /usr/include/c++/13/bits/locale_facets.h:
 
+/usr/include/c++/13/bits/sstream.tcc:
+
+/usr/include/asm-generic/ioctls.h:
+
 /usr/include/c++/13/bits/alloc_traits.h:
 
 /usr/include/c++/13/bits/concept_check.h:
@@ -617,35 +598,19 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/fp-logb.h:
 
+/usr/include/wchar.h:
+
+/usr/include/c++/13/bits/shared_ptr_base.h:
+
+libs/bitmask.hpp:
+
 main.cpp:
 
 /usr/include/x86_64-linux-gnu/bits/termios-c_lflag.h:
 
 /usr/include/c++/13/bits/deque.tcc:
 
-libs/bitmask.hpp:
-
-/usr/include/wchar.h:
-
-/usr/include/c++/13/bits/shared_ptr_base.h:
-
-/usr/include/x86_64-linux-gnu/bits/time64.h:
-
-/usr/include/c++/13/bits/istream.tcc:
-
-/usr/include/c++/13/bits/locale_conv.h:
-
-/usr/include/alloca.h:
-
-/usr/include/c++/13/bits/basic_string.tcc:
-
-/usr/include/c++/13/bits/allocated_ptr.h:
-
-/usr/include/c++/13/bit:
-
-/usr/include/c++/13/bits/refwrap.h:
-
-/usr/include/c++/13/bits/fstream.tcc:
+/usr/include/c++/13/bits/enable_special_members.h:
 
 /usr/include/x86_64-linux-gnu/sys/select.h:
 
@@ -665,7 +630,53 @@ libs/bitmask.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/environments.h:
 
-/usr/include/c++/13/bits/enable_special_members.h:
+/usr/include/c++/13/bits/istream.tcc:
+
+/usr/include/c++/13/bits/locale_conv.h:
+
+/usr/include/alloca.h:
+
+/usr/include/c++/13/bits/basic_string.tcc:
+
+/usr/include/c++/13/bits/allocated_ptr.h:
+
+/usr/include/c++/13/bit:
+
+/usr/include/c++/13/bits/refwrap.h:
+
+/usr/include/c++/13/bits/fstream.tcc:
+
+/usr/include/c++/13/bits/stl_vector.h:
+
+/usr/include/c++/13/bits/stl_tempbuf.h:
+
+/usr/include/c++/13/bits/stl_tree.h:
+
+/usr/include/c++/13/bits/codecvt.h:
+
+/usr/include/x86_64-linux-gnu/bits/ioctls.h:
+
+/usr/include/c++/13/bits/regex.h:
+
+/usr/include/c++/13/backward/binders.h:
+
+/usr/include/asm-generic/ioctl.h:
+
+/usr/include/c++/13/ostream:
+
+/usr/include/c++/13/tr1/riemann_zeta.tcc:
+
+/usr/include/c++/13/bits/cpp_type_traits.h:
+
+/usr/include/x86_64-linux-gnu/bits/termios-baud.h:
+
+/usr/include/c++/13/bits/move.h:
+
+/usr/include/c++/13/bits/cxxabi_forced.h:
+
+/usr/include/x86_64-linux-gnu/bits/termios-c_oflag.h:
+
+/usr/include/c++/13/bits/erase_if.h:
 
 /usr/include/c++/13/bits/localefwd.h:
 
@@ -685,10 +696,6 @@ libs/bitmask.hpp:
 
 /usr/include/c++/13/bits/cxxabi_init_exception.h:
 
-/usr/include/x86_64-linux-gnu/c++/13/bits/c++io.h:
-
-/usr/include/c++/13/typeinfo:
-
 /usr/include/c++/13/bits/exception.h:
 
 /usr/include/c++/13/bits/memory_resource.h:
@@ -702,6 +709,8 @@ libs/bitmask.hpp:
 /usr/include/c++/13/bits/regex_error.h:
 
 /usr/include/c++/13/bits/basic_ios.tcc:
+
+/usr/include/x86_64-linux-gnu/asm/ioctl.h:
 
 /usr/include/x86_64-linux-gnu/bits/endian.h:
 
@@ -717,6 +726,8 @@ libs/inputManager.hpp:
 
 /usr/include/asm-generic/errno-base.h:
 
+/usr/include/c++/13/bits/hash_bytes.h:
+
 /usr/include/x86_64-linux-gnu/bits/math-vector.h:
 
 libs/queue.hpp:
@@ -729,7 +740,9 @@ libs/queue.hpp:
 
 /usr/include/c++/13/bits/ios_base.h:
 
-/usr/include/c++/13/bits/ostream.tcc:
+/usr/include/x86_64-linux-gnu/bits/timesize.h:
+
+/usr/include/c++/13/bits/locale_classes.h:
 
 /usr/include/c++/13/bits/stl_relops.h:
 
@@ -749,7 +762,9 @@ clog.hpp:
 
 /usr/include/c++/13/bits/node_handle.h:
 
-/usr/include/c++/13/bits/ostream_insert.h:
+/usr/include/c++/13/ctime:
+
+/usr/include/c++/13/deque:
 
 /usr/include/c++/13/debug/assertions.h:
 
@@ -786,6 +801,8 @@ clog.hpp:
 /usr/include/c++/13/ext/string_conversions.h:
 
 /usr/include/c++/13/ext/type_traits.h:
+
+/usr/include/x86_64-linux-gnu/bits/ioctl-types.h:
 
 /usr/include/c++/13/bits/std_thread.h:
 
@@ -851,8 +868,6 @@ libs/WindowMangerV2.hpp:
 
 /usr/include/c++/13/tr1/legendre_function.tcc:
 
-/usr/include/curses.h:
-
 /usr/include/c++/13/tr1/modified_bessel_func.tcc:
 
 /usr/include/c++/13/tr1/poly_hermite.tcc:
@@ -875,6 +890,8 @@ libs/WindowMangerV2.hpp:
 
 /usr/include/features.h:
 
+/usr/include/x86_64-linux-gnu/asm/ioctls.h:
+
 /usr/include/linux/close_range.h:
 
 /usr/include/c++/13/debug/debug.h:
@@ -882,6 +899,12 @@ libs/WindowMangerV2.hpp:
 /usr/include/linux/errno.h:
 
 /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h:
+
+/usr/include/x86_64-linux-gnu/c++/13/bits/c++io.h:
+
+/usr/include/c++/13/typeinfo:
+
+/usr/include/linux/ioctl.h:
 
 /usr/include/pthread.h:
 
@@ -892,10 +915,6 @@ libs/WindowMangerV2.hpp:
 /usr/include/stdio.h:
 
 /usr/include/stdlib.h:
-
-/usr/include/c++/13/bits/hash_bytes.h:
-
-/usr/include/unctrl.h:
 
 /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h:
 
@@ -923,6 +942,10 @@ libs/WindowMangerV2.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/sched.h:
 
+/usr/include/x86_64-linux-gnu/bits/time.h:
+
+/usr/include/x86_64-linux-gnu/bits/select.h:
+
 /usr/include/x86_64-linux-gnu/bits/getopt_posix.h:
 
 /usr/include/time.h:
@@ -942,11 +965,3 @@ libs/WindowMangerV2.hpp:
 /usr/include/c++/13/bits/basic_string.h:
 
 /usr/include/x86_64-linux-gnu/bits/termios-tcflow.h:
-
-/usr/include/x86_64-linux-gnu/bits/select.h:
-
-/usr/include/x86_64-linux-gnu/bits/time.h:
-
-/usr/include/c++/13/bits/locale_classes.h:
-
-/usr/include/x86_64-linux-gnu/bits/timesize.h:

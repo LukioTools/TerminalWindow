@@ -1,8 +1,9 @@
+#pragma once
+
 #include "inputManager.hpp"
 #include "../clog.hpp"
 #include "./bitmask.hpp"
 
-#include <curses.h>
 #include <map>
 #include <regex>
 #include <string>
@@ -10,6 +11,7 @@
 #include <variant>
 #include <vector>
 #include <typeindex>
+#include <sys/ioctl.h>
 
 #define COLOR_FG(r,g,b) "\e[38;2;" + std::to_string(r) + ';' + std::to_string(g) +  ';' + std::to_string(b) + 'm'
 #define COLOR_BG(r,g,b) "\e[48;2;" + std::to_string(r) + ';' + std::to_string(g) +  ';' + std::to_string(b) + 'm'
@@ -27,6 +29,15 @@
 
 #define ESC "\e"
 #define MOVE_TO_COORDINATES(x,y) "\e[" + std::to_string(y + 1) + ";" + std::to_string(x + 1) + "H"
+
+#define ENABLE_ALT_BUF() std::cout <<  "\e[?1049h"
+#define DISABLE_ALT_BUF() std::cout <<  "\e[?1049l"
+
+#define DISABLE_WARP() std::cout <<  "\e[?7l"
+#define ENABLE_WARP() std::cout <<  "\e[?7h"
+
+#define HIDE_CURSOR() std::cout << "\033[?25l";
+#define SHOW_CURSOR() std::cout << "\033[?25h" << std::flush;
 
 namespace Color{
     class Rgb{
@@ -51,6 +62,7 @@ namespace Color{
 
 namespace WindowManager
 {
+
     enum POSITIONS : u_char{
         STATIC,
         RELATIVE,
@@ -88,6 +100,12 @@ namespace WindowManager
             u = ut;
         };
 
+        friend std::ostream& operator<<(std::ostream& os, Unit const & tc) {
+            return os << tc.v;
+        }
+
+        operator double() const { return v;}
+
 
         bool operator==(const Unit o){
             return this->v == o.v && this->u == o.u;
@@ -95,22 +113,7 @@ namespace WindowManager
 
         bool operator!=(const Unit o){
             return this->v != o.v || this->u != o.u;
-        }
-
-        Unit operator+(Unit o){
-            return this->v + o.v;
         }  
-
-        Unit operator-(Unit o){
-            return this->v - o.v;
-        }  
-
-        Unit operator*(Unit o){
-            return this->v * o.v;
-        } 
-        Unit operator/(Unit o){
-            return this->v / o.v;
-        } 
 
         bool operator>(Unit other){
             return this->v > other.v;
@@ -149,10 +152,6 @@ namespace WindowManager
             return lhs == rhs.v;
         }
 
-    double operator-(double lhs, const Unit& rhs) {
-            return lhs - rhs.v;
-        }
-
     class vector2{
         public:
         Unit x, y;
@@ -170,6 +169,10 @@ namespace WindowManager
         vector2(InputManager::vector2 v){
             this->x = v.x;
             this->y = v.y;
+        }
+
+        friend std::ostream& operator<< (std::ostream& stream, const vector2& vec){
+            return stream << vec.x << " : " << vec.y;
         }
 
         bool operator==(const vector2 other){
@@ -291,6 +294,10 @@ namespace WindowManager
 
         double aspectRatio = 0;
 
+        bool OverrideCss = false;
+
+        bool css_is_up_to_date = false;
+
         std::string id;
         std::string css;
 
@@ -300,6 +307,10 @@ namespace WindowManager
 
         virtual void SetCss(std::string cs){
             css = cs;
+        }
+
+        virtual std::string GetCss(){
+            return css;
         }
 
         static std::map<std::string, void(*)(std::string, Element *)> map;
@@ -327,12 +338,18 @@ namespace WindowManager
         virtual void ExtraParse(std::string css){}
 
         virtual void ParseCss(){
+
             std::vector<std::string> lines;
-            
+
+            if(css.length() == 0){
+                return;
+            }
+
             {
                 auto a = css.find_first_of('{');
                 css = css.substr(a, css.find_last_of('}')-a);
             }
+
 
             size_t pos = 0;
             while (true)
@@ -342,7 +359,7 @@ namespace WindowManager
                 if(c == std::variant_npos)
                     break;
 
-                lines.push_back(css.substr(pos, c-pos));
+                lines.push_back(css.substr(pos + 1, c-pos));
                 pos = c + 1;
             }
 
@@ -350,7 +367,9 @@ namespace WindowManager
 
             for (int i = 0; i < lines.size(); i++)
             {
-                auto cb = map[lines[i]];
+                size_t kp = lines[i].find_first_of(':');
+                auto cb = map[lines[i].substr(0, kp)];
+                
                 if(cb) 
                     thr.emplace_back(cb, lines[i], this);
             }
@@ -360,7 +379,9 @@ namespace WindowManager
                 {
                     t.join();
                 }   
-            }         
+            }  
+
+            css_is_up_to_date = true;      
         }
 
         virtual ~Element();
@@ -386,12 +407,9 @@ namespace WindowManager
              std::regex px(".*px;?");
              std::regex per(".*%;?");
 
-             clog << "top" << std::endl;
-
             size_t dd = css.find_first_of(':');
         
             if(std::regex_match(css, px)){
-                clog << "px" << std::endl;
                 size_t end = css.find("px");
                 u = Unit(std::stod(css.substr(dd+1, end-1)), UNIT::ABSOLUT);
             }
@@ -399,7 +417,6 @@ namespace WindowManager
                 size_t end = css.find_first_of('%');
                 u = Unit(std::stod(css.substr(dd+1, end-1)), UNIT::PERCENTAGE);
             }
-
             E->SetPosition_Y(u);
         }),
 
@@ -505,7 +522,9 @@ namespace WindowManager
             position.x = x;
         }
 
-        void SetPosition_Y(Unit y) override{}
+        void SetPosition_Y(Unit y) override{
+            position.y = y;
+        }
 
         void SetHeight(Unit h) override{}
 
@@ -591,19 +610,58 @@ namespace WindowManager
         std::cout << std::flush;
     }
 
-    class Window : Element{
+
+    void ConvertToAbsolute(vector2& size, vector2& pos, vector2 rsize){
+                if (size.x.u == UNIT::PERCENTAGE)
+                {
+                    size.x = round((size.x/100)*rsize.x.v);
+                    size.x.u = UNIT::ABSOLUT;
+                }else{
+                    size.x.u = UNIT::ABSOLUT;
+                }
+
+                if (size.y.u == UNIT::PERCENTAGE)
+                {
+                    size.y = round((size.y/100)*rsize.y.v);
+                    size.y.u = UNIT::ABSOLUT;
+                } else{
+                    size.y.u = UNIT::ABSOLUT;
+                }
+
+                if (pos.x.u == UNIT::PERCENTAGE)
+                {
+                    pos.x = round((pos.x/100)*rsize.x.v);
+                    pos.x.u = UNIT::ABSOLUT;
+                }else{
+                    pos.x.u = UNIT::ABSOLUT;
+                }
+
+                if (pos.y.u == UNIT::PERCENTAGE)
+                {
+                    pos.y = round((pos.y/100)*rsize.y.v);
+                    pos.y.u = UNIT::ABSOLUT;
+                }else{
+                    pos.y.u = UNIT::ABSOLUT;
+                }
+        }
+
+    class Window : public Element{
         public:
         // this stores elements and handles the placemant and position of them
         std::vector<Element *> elements;
         std::vector<RenderElement> renderElements;
 
-        std::string css;
-
         Color::Rgb bg;
 
         vector2 position, size;
 
-        void ParseCss() override{}
+        void SetId(std::string eid){
+            id = eid;
+        }
+
+        std::string GetCss() override{
+            return css;
+        }
 
 
         Window() : bg(0,0,0){
@@ -613,53 +671,43 @@ namespace WindowManager
             elements.push_back(element);
         }
 
-        void SetCss(std::string cs){
+        void SetPosition_X(Unit x) override{
+            position.x = x;
+        }
+
+        void SetPosition_Y(Unit y) override{
+            position.y = y; 
+        }
+
+        void SetHeight(Unit h) override{
+            size.y = h;
+        }
+
+        void SetWidth(Unit w) override {
+            size.x = w;
+        }
+
+        void SetCss(std::string cs) override{
             css = cs;
+
         }
 
         RenderElement Render(vector2 size){
             RenderElement window = RenderElement(size, ' ', bg);
 
             // Remember to make optimations for this, so if nothing moves it should not generate everything from start, only thigns tthat changes
-
-            for (int i = 0; i < elements.size(); i++)
-            {
-                elements[i]->ParseCss();
-            }
             
-
             for (int i = 0; i < elements.size(); i++)
             {
-                vector2 siz, pos;
-                if (elements[i]->GetSize().x.u == UNIT::PERCENTAGE)
+                if (!elements[i]->OverrideCss && !elements[i]->css_is_up_to_date)
                 {
-                    siz.x = size.x/elements[i]->GetSize().x.v;
-                }else{
-                    siz.x = elements[i]->GetSize().x;
-                }
-
-                if (elements[i]->GetSize().y.u == UNIT::PERCENTAGE)
-                {
-                    siz.y = size.y/elements[i]->GetSize().x.v;
-                } else{
-                    siz.y = elements[i]->GetSize().x;
-                }
-
-                if (elements[i]->GetPosition().x.u == UNIT::PERCENTAGE)
-                {
-                    pos.x = size.y/elements[i]->GetPosition().x.v;
-                }else{
-                    pos.x = elements[i]->GetPosition().x;
-                }
-
-                if (elements[i]->GetPosition().y.u == UNIT::PERCENTAGE)
-                {
-                    pos.y = size.y/elements[i]->GetPosition().y.v;
-                }else{
-                    pos.y = elements[i]->GetPosition().y;
+                    elements[i]->ParseCss();
                 }
                 
-                
+                vector2 siz = elements[i]->GetSize();
+                vector2 pos = elements[i]->GetPosition();
+
+                ConvertToAbsolute(siz, pos, size);
 
                 RenderElement e1 = elements[i]->Render(siz);
                 window = CombineRenderElements(window, e1, pos);
@@ -688,16 +736,20 @@ namespace WindowManager
 
             RenderElement screen(size, ' ');
 
-            for (int i = 0; i < (*this).size(); i++)
-            {
-                (*this).at(i)->ParseCss();
-            }
-
             for (int i = 0; i < this->size(); i++)
             {
-                
-                RenderElement e = (*this).at(i)->Render((*this).at(i)->size);
-                screen = CombineRenderElements(screen, e, (*this).at(i)->position);
+                if (!(*this)[i]->OverrideCss && !(*this)[i]->css_is_up_to_date)
+                {
+                     (*this)[i]->ParseCss();
+                }
+
+                vector2 siz = (*this).at(i)->size;
+                vector2 pos = (*this).at(i)->position;
+
+                ConvertToAbsolute(siz, pos, size);
+
+                RenderElement e = (*this).at(i)->Render(siz);
+                screen = CombineRenderElements(screen, e, pos);
             }
             
             RenderToScreen(oldScreen, screen);
@@ -706,4 +758,22 @@ namespace WindowManager
 
         ~Screen() {}
     };
+
+    vector2 ScreenSize(){
+        winsize w;
+        ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+        return vector2(w.ws_col, w.ws_row);
+    }
+
+    void InitializeWindowManager(){
+        HIDE_CURSOR()
+        ENABLE_ALT_BUF();
+        DISABLE_WARP();
+    }
+
+    void EndWindowManager(){
+        SHOW_CURSOR()
+        DISABLE_ALT_BUF();
+        ENABLE_WARP();
+    }
 }
