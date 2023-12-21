@@ -19,14 +19,17 @@ int main(int argc, char const *argv[])
     WindowManager::Window window = WindowManager::Window();
 
     WindowManager::Text* text = new WindowManager::Text(1, "t1");
-    //text->SetCss(t1_css);
-    text->SetText("1");
     text->SetCss(t1_css);
+    text->SetText("teksti 1");
+    text->id = "id 1";
+    text->SetCss(t1_css);
+    text->bg = Color::Rgb(00,255,00);
 
     WindowManager::Text* text2 = new WindowManager::Text(1, "t1");
-    //text->SetCss(t1_css);
-    text2->SetText("1");
-    text->SetCss(t2_css);
+    text2->SetCss(t2_css);
+    text2->SetText("teksti 2");
+    text2->id = "id 2";
+    text2->bg =Color::Rgb(255,00,00);
 
     WindowManager::Screen screen;
     

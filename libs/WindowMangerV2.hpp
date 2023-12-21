@@ -380,7 +380,6 @@ namespace WindowManager
                     t.join();
                 }   
             }  
-
             css_is_up_to_date = true;      
         }
 
@@ -495,12 +494,13 @@ namespace WindowManager
     });
 
     class Text : public Element{
+        public:
         std::string text;
         Color::Rgb bg;
 
         vector2 position, size;
 
-        public:
+        
         Text(float pa, std::string eid) : bg(0, 0, 0){
             aspectRatio = pa;
             id = eid;
@@ -526,9 +526,13 @@ namespace WindowManager
             position.y = y;
         }
 
-        void SetHeight(Unit h) override{}
+        void SetHeight(Unit h) override{
+            size.y = h;
+        }
 
-        void SetWidth(Unit w) override{}
+        void SetWidth(Unit w) override{
+            size.x = w;
+        }
 
         vector2 GetPosition() const override{
             return position;
@@ -536,6 +540,10 @@ namespace WindowManager
 
         vector2 GetSize() const override{
             return size;
+        }
+
+        void SetCss(std::string cs) override{
+            css = cs;
         }
 
         RenderElement Render(vector2 size) const override{
@@ -602,8 +610,6 @@ namespace WindowManager
 
                     oldScreen.SetPixel(vector2(x,y), newScreen.GetPixel(vector2(x,y)));
                 }
-                clog2 << MOVE_TO_COORDINATES(x,y);
-                clog2 << newScreen.GetPixel(vector2(x,y));
             }
         }
 
@@ -687,9 +693,16 @@ namespace WindowManager
             size.x = w;
         }
 
+        vector2 GetPosition() const override{
+            return position;
+        }
+
+        vector2 GetSize() const override{
+            return size;
+        }
+
         void SetCss(std::string cs) override{
             css = cs;
-
         }
 
         RenderElement Render(vector2 size){
