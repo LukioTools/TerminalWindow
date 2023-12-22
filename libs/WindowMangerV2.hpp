@@ -63,6 +63,8 @@ namespace Color{
 namespace WindowManager
 {
 
+    std::string FullCss;
+
     enum POSITIONS : u_char{
         STATIC,
         RELATIVE,
@@ -240,6 +242,17 @@ namespace WindowManager
         }
 
     };
+
+    // Finds css for specific id from complete css file
+    std::string findCssById(std::string &css, std::string id){
+        size_t beginning = css.find(id);
+        if (beginning == std::string::npos){return std::string("");}
+
+        size_t ekasulje = css.find_first_of('{', beginning);
+        size_t tokasulje = css.find_first_of('}', ekasulje);
+
+        return css.substr(ekasulje, tokasulje);
+    }
 
     class RenderElement{
         public:
@@ -714,6 +727,7 @@ namespace WindowManager
             {
                 if (!elements[i]->OverrideCss && !elements[i]->css_is_up_to_date)
                 {
+                    elements[i]->SetCss(findCssById(FullCss, elements[i]->id)); 
                     elements[i]->ParseCss();
                 }
                 
@@ -753,7 +767,8 @@ namespace WindowManager
             {
                 if (!(*this)[i]->OverrideCss && !(*this)[i]->css_is_up_to_date)
                 {
-                     (*this)[i]->ParseCss();
+                    (*this)[i]->SetCss(findCssById(FullCss, (*this)[i]->id)); 
+                    (*this)[i]->ParseCss();
                 }
 
                 vector2 siz = (*this).at(i)->size;
