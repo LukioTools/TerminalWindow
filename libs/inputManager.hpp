@@ -10,6 +10,7 @@
 
 #include "./queue"
 #include "queue.hpp"
+#include "../clog.hpp"
 
 namespace InputManager
 {
@@ -67,10 +68,12 @@ class vector2{
 
 Queues::AtomicQueue<int> keyPressed;
 std::atomic<vector2> mousePos;
+std::atomic<int> mouseBtn;
 
 std::atomic<bool> running(true);
 
 int key;
+int mouseKey;
 
 std::thread t1;
 
@@ -81,6 +84,8 @@ void tick(){
     }else{
          key = 0;
     }
+
+    mouseKey = mouseBtn.load();
 
    
 }
@@ -117,12 +122,15 @@ void restore_terminal_settings() {
 
 void UpdateInputManager(){
 
+    int last_mouse = 67;
+
     while (running.load())
     {
         unsigned int btn = 0, x=0,y=0;
         int c, ch;
         
         ch = std::cin.get();
+    
 
         if(ch != '\x1b'){
             keyPressed.push_back(ch);
@@ -146,38 +154,45 @@ void UpdateInputManager(){
         
         btn = std::cin.get();
 
+        
+
         x = std::cin.get()-'\x21';
         y = std::cin.get()-'\x21';
 
         ch = '\xFF' + (btn<<8) + (x<<16) + (y<<24);
 
         mousePos.store(vector2(x,y));
-        //keyPressed.store(btn);
 
 
-
-    }
+        if (last_mouse != btn)
+        {
+            mouseBtn.store(btn);
+            last_mouse = btn;
+        }
         
+        
+        
+        
+
+    }   
     //End:
     //    restore_terminal_settings();
-    
 }
 
 void InitializeInputManager(){
     noecho();
-    std::cout << enable_mouse(SET_X10_MOUSE) << std::flush;
+    std::cout << enable_mouse(SET_ANY_EVENT_MOUSE) << std::flush;
     t1 = std::thread(UpdateInputManager);
 }
 
 void EndInputManager(){
     running.store(false);
     restore_terminal_settings();
-    std::cout << disable_mouse(SET_X10_MOUSE) << std::flush;
+    std::cout << disable_mouse(SET_ANY_EVENT_MOUSE) << std::flush;
 }
 
 bool GetKeyDown(int k){
-    return key == k  ? true : false;
-    
+    return key == k  ? true : false;  
 }
 
 int GetKey(){
@@ -186,6 +201,10 @@ int GetKey(){
 
 vector2 GetMousePosition(){
     return mousePos;
+}
+
+int GetMouseKey(){
+    return mouseKey;
 }
 
 };

@@ -12,6 +12,7 @@
 #include <vector>
 #include <typeindex>
 #include <sys/ioctl.h>
+#include <functional>
 
 #define COLOR_FG(r,g,b) "\e[38;2;" + std::to_string(r) + ';' + std::to_string(g) +  ';' + std::to_string(b) + 'm'
 #define COLOR_BG(r,g,b) "\e[48;2;" + std::to_string(r) + ';' + std::to_string(g) +  ';' + std::to_string(b) + 'm'
@@ -24,7 +25,7 @@
 // ANSI escape code for resetting colors
 #define RESET_COLOR "\033[0m"
 
-#define CLEAR_TERMINAL() std::cout << "\033c" << std::endl;
+#define CLEAR_TERMINAL() std::cout << "\e[2J" << std::endl;
 #define CLEAR_TERMINAL_CLOG() clog << "\033c" << std::endl;
 
 #define ESC "\e"
@@ -243,15 +244,55 @@ namespace WindowManager
 
     };
 
-    // Finds css for specific id from complete css file
-    std::string findCssById(std::string &css, std::string id){
-        size_t beginning = css.find(id);
-        if (beginning == std::string::npos){return std::string("");}
+    std::vector<size_t> findAllFromString(std::string& full, std::string term){
+        std::vector<size_t> positions;
 
+        size_t pos = 0;
+        while ((pos = full.find(term, pos)) != std::string::npos) {
+            positions.push_back(pos);
+            ++pos;
+        }
+
+        return positions;
+    }
+
+    // Finds css for specific id from complete css file
+    std::vector<std::string> findCssById(std::string &css, std::string id){
+
+        std::vector<std::string> allCss;
+
+        std::vector<size_t> All = findAllFromString(css, id);
+
+        for (int i = 0; i < All.size(); i++)
+        {
+            size_t pos = All[i] + id.length();
+            if (css[pos] == ':')
+            {
+                allCss.push_back(css.substr(pos + 1, css.find_first_of('}', pos)));
+            }
+            
+        }
+        
+
+        size_t beginning = css.find("#" + id);
+        if (beginning == std::string::npos){return std::vector<std::string>();}
         size_t ekasulje = css.find_first_of('{', beginning);
         size_t tokasulje = css.find_first_of('}', ekasulje);
 
-        return css.substr(ekasulje, tokasulje);
+        allCss.push_back(css.substr(ekasulje, tokasulje-ekasulje));
+        return allCss;
+    }
+
+    std::string trim(std::string str) {
+        auto start = std::find_if_not(str.begin(), str.end(), [](unsigned char c) {
+            return std::isspace(c);
+        });
+        
+        auto end = std::find_if_not(str.rbegin(), str.rend(), [](unsigned char c) {
+            return std::isspace(c);
+        }).base();
+        
+        return (start < end ? std::string(start, end) : std::string());
     }
 
     class RenderElement{
@@ -302,8 +343,60 @@ namespace WindowManager
         }
     };
 
+    vector2 ScreenSize(){
+        winsize w;
+        ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+        return vector2(w.ws_col, w.ws_row);
+    }
+
+    void ConvertToAbsolute(vector2& size, vector2& pos, vector2 rsize){
+        if (size.x.u == UNIT::PERCENTAGE)
+        {
+            size.x = round((size.x/100)*rsize.x.v);
+            size.x.u = UNIT::ABSOLUT;
+        }else{
+            size.x.u = UNIT::ABSOLUT;
+        }
+
+        if (size.y.u == UNIT::PERCENTAGE)
+        {
+            size.y = round((size.y/100)*rsize.y.v);
+            size.y.u = UNIT::ABSOLUT;
+        } else{
+            size.y.u = UNIT::ABSOLUT;
+        }
+
+        if (pos.x.u == UNIT::PERCENTAGE)
+        {
+            pos.x = round((pos.x/100)*rsize.x.v);
+            pos.x.u = UNIT::ABSOLUT;
+        }else{
+            pos.x.u = UNIT::ABSOLUT;
+        }
+
+        if (pos.y.u == UNIT::PERCENTAGE)
+        {
+            pos.y = round((pos.y/100)*rsize.y.v);
+            pos.y.u = UNIT::ABSOLUT;
+        }else{
+            pos.y.u = UNIT::ABSOLUT;
+        }
+    }
+
+    enum EVENT{
+        NONE,
+        HOVER,
+        ACTIVE
+    };
+
     class Element{
+
         public:
+        std::map<EVENT, std::string> css_events = {
+            {NONE, {}},
+            {HOVER, {}},
+            {ACTIVE, {}},
+        };
 
         double aspectRatio = 0;
 
@@ -312,17 +405,17 @@ namespace WindowManager
         bool css_is_up_to_date = false;
 
         std::string id;
-        std::string css;
+        std::vector<std::string> css;
 
         virtual double GetPreferedAspectRatio() const {
             return aspectRatio;
         }
 
-        virtual void SetCss(std::string cs){
+        virtual void SetCss(std::vector<std::string> cs){
             css = cs;
         }
 
-        virtual std::string GetCss(){
+        virtual std::vector<std::string> GetCss(){
             return css;
         }
 
@@ -330,7 +423,7 @@ namespace WindowManager
 
         POSITIONS position_type = STATIC;
 
-        virtual RenderElement Render(vector2 size) const {}
+        virtual RenderElement Render(vector2 size) {}
 
         virtual void SetPosition(vector2 pos){}
 
@@ -344,6 +437,8 @@ namespace WindowManager
 
         virtual void SetSize(vector2 pos){}
 
+        virtual void SetBackgroundColor(Color::Rgb){}
+
         virtual vector2 GetPosition() const {}
 
         virtual vector2 GetSize() const {}
@@ -354,25 +449,93 @@ namespace WindowManager
 
             std::vector<std::string> lines;
 
-            if(css.length() == 0){
+            for (int i = 0; i < css.size(); i++)
+            {
+                if (css[i][0] != '{')
+                {
+                    size_t br = css[i].find_first_of('{');
+                    if (css[i].substr(0, br).find("hover") != std::string::npos)
+                    {
+                        css_events.find(EVENT::HOVER)->second = css[i];
+                    }else if (css[i].substr(0, br).find("active") != std::string::npos)
+                    {
+                        css_events.find(EVENT::ACTIVE)->second = css[i];
+                    }
+                    
+                    continue;
+                }
+
+                css_events.find(EVENT::NONE)->second = css[i];
+                
+                std::string defaul = css[i]; 
+
+                if(defaul.length() == 0){
+                    return;
+                }
+
+                {
+                    auto a = defaul.find_first_of('{');
+                    defaul = defaul.substr(a, defaul.find_last_of('}')-a);
+                }
+
+                size_t pos = 0;
+                while (true)
+                {
+                    size_t c = defaul.find(";", pos);
+                    
+                    if(c == std::variant_npos)
+                        break;
+
+                    lines.push_back(defaul.substr(pos + 1, c-pos));
+                    pos = c + 1;
+                }
+
+                std::vector<std::thread> thr;
+
+                for (int i = 0; i < lines.size(); i++)
+                {
+                    size_t kp = lines[i].find_first_of(':');
+                    auto cb = map[trim(lines[i].substr(0, kp))];
+                    
+                    if(cb) 
+                        thr.emplace_back(cb, lines[i], this);
+                }
+
+                for(auto& t : thr){
+                    if (t.joinable())
+                    {
+                        t.join();
+                    }   
+                } 
+            }
+            css_is_up_to_date = true;      
+        }
+
+        virtual void ParseCss(std::string NewCss){
+
+            std::vector<std::string> lines;
+
+            std::string defaul = NewCss;
+
+            if(defaul.length() == 0){
                 return;
             }
 
             {
-                auto a = css.find_first_of('{');
-                css = css.substr(a, css.find_last_of('}')-a);
+                auto a = defaul.find_first_of('{');
+                defaul = defaul.substr(a, defaul.find_last_of('}')-a);
             }
 
-
             size_t pos = 0;
+
             while (true)
             {
-                size_t c = css.find(";", pos);
+                size_t c = defaul.find(";", pos);
                 
                 if(c == std::variant_npos)
                     break;
 
-                lines.push_back(css.substr(pos + 1, c-pos));
+                lines.push_back(defaul.substr(pos + 1, c-pos));
                 pos = c + 1;
             }
 
@@ -381,7 +544,7 @@ namespace WindowManager
             for (int i = 0; i < lines.size(); i++)
             {
                 size_t kp = lines[i].find_first_of(':');
-                auto cb = map[lines[i].substr(0, kp)];
+                auto cb = map[trim(lines[i].substr(0, kp))];
                 
                 if(cb) 
                     thr.emplace_back(cb, lines[i], this);
@@ -392,7 +555,7 @@ namespace WindowManager
                 {
                     t.join();
                 }   
-            }  
+            } 
             css_is_up_to_date = true;      
         }
 
@@ -493,7 +656,6 @@ namespace WindowManager
         }),
  
         std::make_pair("aspect-ratio", [](std::string css, Element * E){
-            std::regex getNumber(":(\\d+)");
             std::smatch match;
 
             size_t i = css.find_first_of('/');
@@ -503,6 +665,35 @@ namespace WindowManager
             double d = std::stod(css.substr(i +1 , sc));
 
             E->aspectRatio = u/d;
+        }),
+
+        std::make_pair("background-color", [](std::string css, Element * E){
+
+            std::smatch match;
+
+            
+            size_t kp = css.find_first_of(':');
+            size_t fbr = css.find_first_of('(', kp);
+            size_t sc = css.find_first_of(';');
+
+            size_t last = fbr + 1;
+            
+            Color::Rgb color(0,0,0);
+            
+            size_t v = css.find_first_of(',', last + 1);
+            color.r = std::stod(css.substr(last, v - last));
+            last = v + 1;
+
+            v = css.find_first_of(',', last + 1);
+            color.g = std::stod(css.substr(last, v - last));
+            last = v + 1;
+
+            v = css.find_first_of(',', last + 1);
+            color.b = std::stod(css.substr(last, v - last));
+            last = v + 1;
+
+            E->SetBackgroundColor(color);
+            
         }),
     });
 
@@ -547,6 +738,10 @@ namespace WindowManager
             size.x = w;
         }
 
+        void SetBackgroundColor(Color::Rgb c) override {
+            bg = c;
+        }
+
         vector2 GetPosition() const override{
             return position;
         }
@@ -555,11 +750,11 @@ namespace WindowManager
             return size;
         }
 
-        void SetCss(std::string cs) override{
+        void SetCss(std::vector<std::string> cs) override{
             css = cs;
         }
 
-        RenderElement Render(vector2 size) const override{
+        RenderElement Render(vector2 size) override{
             RenderElement RE(size);
             vector2 textStartPos((size.x/2.0)-(double)(text.length()/2.0), size.y/2.0);
             
@@ -581,6 +776,145 @@ namespace WindowManager
             }
             return RE; 
         }
+    };
+
+    class Button : public Element{
+        public:
+            std::string text;
+
+            vector2 position, size;
+
+            Color::Rgb bg;
+            Color::Rgb highlight;
+            Color::Rgb pressed;
+
+            Button(float pa, std::string eid) : bg(0, 0, 0), highlight(0,0,0), pressed(0,0,0){
+                aspectRatio = pa;
+                id = eid;
+            }
+
+            void SetText(std::string t){
+                text = t;
+            }
+
+            void SetPosition(vector2 pos) override{
+                position = pos;
+            }
+
+            void SetSize(vector2 s) override{
+                size = s;
+            }
+
+            void SetPosition_X(Unit x) override{
+                position.x = x;
+            }
+
+            void SetPosition_Y(Unit y) override{
+                position.y = y;
+            }
+
+            void SetHeight(Unit h) override{
+                size.y = h;
+            }
+
+            void SetWidth(Unit w) override{
+                size.x = w;
+            }
+
+            void SetCss(std::vector<std::string> cs) override{
+                css = cs;
+            }
+
+            vector2 GetPosition() const override{
+                return position;
+            }
+
+            vector2 GetSize() const override{
+                return size;
+            }
+
+            void SetBackgroundColor(Color::Rgb c) override {
+                bg = c;
+            }
+
+            bool Inside(){
+                vector2 siz = size;
+                vector2 pos = position;
+
+                ConvertToAbsolute(siz, pos, ScreenSize());
+
+                vector2 cursorPos = InputManager::GetMousePosition();
+                if ((cursorPos.x >= pos.x && (double)cursorPos.x <= (double)(pos.x + siz.x)) && (cursorPos.y >= pos.y && (double)cursorPos.y <= (double)(pos.y + siz.y)))
+                {
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            using CallbackFunction = std::function<void()>;
+
+            void setOnClick(CallbackFunction callback) {
+                callback_ = callback;
+            }
+
+
+            RenderElement Render(vector2 size) override{
+                EVENT e;
+
+                bool onHighlight = Inside();
+                if (InputManager::GetMouseKey() == 32 && onHighlight)
+                {
+                    e = EVENT::ACTIVE;
+                }else if (onHighlight){
+                    e = EVENT::HOVER;
+                }
+                
+                if (lastEvent != e)
+                {
+                    if(onHighlight){
+                        ParseCss(css_events.find(e)->second);
+                    }else{
+                        ParseCss();
+                    }
+                    lastEvent = e;
+
+                    if (e == EVENT::ACTIVE)
+                    {
+                        if (callback_ != nullptr)
+                        {
+                            callback_();
+                        }     
+                    }     
+                }
+
+                RenderElement RE(size);
+                vector2 textStartPos((size.x/2.0)-(double)(text.length()/2.0), size.y/2.0);
+                
+                for (int y = 0; y < size.y; y++)
+                {
+                    for (int x = 0; x < size.x; x++)
+                    {
+                        Pixel r;
+                        r.bg = bg;
+
+                        if(y==textStartPos.y && x >= textStartPos.x && x < textStartPos.x + (double)text.length()){
+                            r.ch = text[x-textStartPos.x];
+                        }else{
+                            r.ch = ' ';
+                        }
+
+                        RE.SetPixel(vector2(x,y), r);
+                    }   
+                }
+                
+                return RE; 
+            }
+         
+
+        private:
+            CallbackFunction callback_;
+            EVENT lastEvent = EVENT::NONE;
     };
 
     RenderElement CombineRenderElements(RenderElement bottom, RenderElement top, vector2 pos){
@@ -629,41 +963,6 @@ namespace WindowManager
         std::cout << std::flush;
     }
 
-
-    void ConvertToAbsolute(vector2& size, vector2& pos, vector2 rsize){
-                if (size.x.u == UNIT::PERCENTAGE)
-                {
-                    size.x = round((size.x/100)*rsize.x.v);
-                    size.x.u = UNIT::ABSOLUT;
-                }else{
-                    size.x.u = UNIT::ABSOLUT;
-                }
-
-                if (size.y.u == UNIT::PERCENTAGE)
-                {
-                    size.y = round((size.y/100)*rsize.y.v);
-                    size.y.u = UNIT::ABSOLUT;
-                } else{
-                    size.y.u = UNIT::ABSOLUT;
-                }
-
-                if (pos.x.u == UNIT::PERCENTAGE)
-                {
-                    pos.x = round((pos.x/100)*rsize.x.v);
-                    pos.x.u = UNIT::ABSOLUT;
-                }else{
-                    pos.x.u = UNIT::ABSOLUT;
-                }
-
-                if (pos.y.u == UNIT::PERCENTAGE)
-                {
-                    pos.y = round((pos.y/100)*rsize.y.v);
-                    pos.y.u = UNIT::ABSOLUT;
-                }else{
-                    pos.y.u = UNIT::ABSOLUT;
-                }
-        }
-
     class Window : public Element{
         public:
         // this stores elements and handles the placemant and position of them
@@ -678,10 +977,9 @@ namespace WindowManager
             id = eid;
         }
 
-        std::string GetCss() override{
+        std::vector<std::string> GetCss() override{
             return css;
         }
-
 
         Window() : bg(0,0,0){
         }
@@ -714,17 +1012,18 @@ namespace WindowManager
             return size;
         }
 
-        void SetCss(std::string cs) override{
+        void SetCss(std::vector<std::string> cs) override{
             css = cs;
         }
 
         RenderElement Render(vector2 size){
             RenderElement window = RenderElement(size, ' ', bg);
-
+            
             // Remember to make optimations for this, so if nothing moves it should not generate everything from start, only thigns tthat changes
             
             for (int i = 0; i < elements.size(); i++)
             {
+                
                 if (!elements[i]->OverrideCss && !elements[i]->css_is_up_to_date)
                 {
                     elements[i]->SetCss(findCssById(FullCss, elements[i]->id)); 
@@ -735,9 +1034,10 @@ namespace WindowManager
                 vector2 pos = elements[i]->GetPosition();
 
                 ConvertToAbsolute(siz, pos, size);
-
+                
                 RenderElement e1 = elements[i]->Render(siz);
                 window = CombineRenderElements(window, e1, pos);
+                
             }
             return window;
         }
@@ -754,10 +1054,13 @@ namespace WindowManager
        
         void Render(vector2 size){
 
+            
             if(oldScreen.size != size){
                 oldScreen = RenderElement(vector2(size));
-                CLEAR_TERMINAL();
+                //CLEAR_TERMINAL();
             }
+
+            
 
             //std::vector<Window> windows = *this;
 
@@ -765,33 +1068,31 @@ namespace WindowManager
 
             for (int i = 0; i < this->size(); i++)
             {
+                //clog << "Rendering Element: " << i << std::endl;
                 if (!(*this)[i]->OverrideCss && !(*this)[i]->css_is_up_to_date)
                 {
                     (*this)[i]->SetCss(findCssById(FullCss, (*this)[i]->id)); 
                     (*this)[i]->ParseCss();
                 }
 
+                
+
                 vector2 siz = (*this).at(i)->size;
                 vector2 pos = (*this).at(i)->position;
-
+                
                 ConvertToAbsolute(siz, pos, size);
-
+                
                 RenderElement e = (*this).at(i)->Render(siz);
+                
                 screen = CombineRenderElements(screen, e, pos);
-            }
-            
-            RenderToScreen(oldScreen, screen);
-                  
+                
+            }          
+            RenderToScreen(oldScreen, screen);    
+             
         }
 
         ~Screen() {}
     };
-
-    vector2 ScreenSize(){
-        winsize w;
-        ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-        return vector2(w.ws_col, w.ws_row);
-    }
 
     void InitializeWindowManager(){
         HIDE_CURSOR()

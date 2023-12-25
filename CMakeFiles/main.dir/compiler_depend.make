@@ -4,6 +4,7 @@
 CMakeFiles/main.dir/main.cpp.o: main.cpp \
   clog.hpp \
   libs/bitmask.hpp \
+  libs/FileManager.hpp \
   libs/WindowMangerV2.hpp \
   libs/inputManager.hpp \
   libs/queue.hpp \
@@ -12,6 +13,7 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
   /usr/include/asm-generic/errno.h \
   /usr/include/asm-generic/ioctl.h \
   /usr/include/asm-generic/ioctls.h \
+  /usr/include/c++/13/array \
   /usr/include/c++/13/atomic \
   /usr/include/c++/13/backward/binders.h \
   /usr/include/c++/13/bit \
@@ -43,6 +45,8 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
   /usr/include/c++/13/bits/functexcept.h \
   /usr/include/c++/13/bits/functional_hash.h \
   /usr/include/c++/13/bits/hash_bytes.h \
+  /usr/include/c++/13/bits/hashtable.h \
+  /usr/include/c++/13/bits/hashtable_policy.h \
   /usr/include/c++/13/bits/invoke.h \
   /usr/include/c++/13/bits/ios_base.h \
   /usr/include/c++/13/bits/istream.tcc \
@@ -115,6 +119,7 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
   /usr/include/c++/13/bits/this_thread_sleep.h \
   /usr/include/c++/13/bits/uniform_int_dist.h \
   /usr/include/c++/13/bits/unique_ptr.h \
+  /usr/include/c++/13/bits/unordered_map.h \
   /usr/include/c++/13/bits/uses_allocator.h \
   /usr/include/c++/13/bits/uses_allocator_args.h \
   /usr/include/c++/13/bits/utility.h \
@@ -124,6 +129,7 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
   /usr/include/c++/13/cerrno \
   /usr/include/c++/13/clocale \
   /usr/include/c++/13/cmath \
+  /usr/include/c++/13/compare \
   /usr/include/c++/13/cstddef \
   /usr/include/c++/13/cstdint \
   /usr/include/c++/13/cstdio \
@@ -143,6 +149,7 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
   /usr/include/c++/13/ext/string_conversions.h \
   /usr/include/c++/13/ext/type_traits.h \
   /usr/include/c++/13/fstream \
+  /usr/include/c++/13/functional \
   /usr/include/c++/13/initializer_list \
   /usr/include/c++/13/ios \
   /usr/include/c++/13/iosfwd \
@@ -181,6 +188,7 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
   /usr/include/c++/13/type_traits \
   /usr/include/c++/13/typeindex \
   /usr/include/c++/13/typeinfo \
+  /usr/include/c++/13/unordered_map \
   /usr/include/c++/13/utility \
   /usr/include/c++/13/variant \
   /usr/include/c++/13/vector \
@@ -382,8 +390,6 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/types/locale_t.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/error_t.h:
-
 /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/clockid_t.h:
@@ -402,21 +408,19 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/time64.h:
 
-/usr/include/c++/13/cstdio:
+/usr/include/x86_64-linux-gnu/bits/termios.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h:
+/usr/include/x86_64-linux-gnu/bits/types/time_t.h:
 
-/usr/include/c++/13/bits/charconv.h:
+/usr/include/x86_64-linux-gnu/bits/termios-struct.h:
 
-/usr/include/c++/13/fstream:
+/usr/include/x86_64-linux-gnu/bits/termios-misc.h:
 
-/usr/include/c++/13/cmath:
+/usr/include/x86_64-linux-gnu/bits/termios-c_iflag.h:
 
 /usr/include/c++/13/clocale:
 
 /usr/include/c++/13/cerrno:
-
-/usr/include/c++/13/cstdint:
 
 /usr/include/c++/13/cctype:
 
@@ -446,15 +450,13 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
 
 /usr/include/c++/13/bits/unique_ptr.h:
 
+/usr/include/c++/13/bits/unordered_map.h:
+
 /usr/include/c++/13/bits/new_allocator.h:
 
 /usr/include/c++/13/bits/stl_uninitialized.h:
 
 /usr/include/c++/13/bits/stl_map.h:
-
-/usr/include/c++/13/cstdlib:
-
-/usr/include/c++/13/bits/regex_scanner.h:
 
 /usr/include/c++/13/locale:
 
@@ -470,8 +472,6 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
 
 /usr/include/c++/13/bits/stl_bvector.h:
 
-/usr/include/c++/13/bits/allocator.h:
-
 /usr/include/c++/13/bits/stl_algo.h:
 
 /usr/include/c++/13/cstddef:
@@ -482,13 +482,19 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:
 
+/usr/include/c++/13/cstdint:
+
+/usr/include/c++/13/bits/regex_scanner.h:
+
+/usr/include/c++/13/cstdlib:
+
 /usr/include/c++/13/cwctype:
 
 /usr/include/c++/13/ratio:
 
-/usr/include/c++/13/bits/stl_stack.h:
-
 /usr/include/c++/13/bits/stringfwd.h:
+
+/usr/include/c++/13/bits/stl_stack.h:
 
 /usr/include/c++/13/bits/this_thread_sleep.h:
 
@@ -514,6 +520,10 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
 
 /usr/include/c++/13/bits/regex_compiler.tcc:
 
+/usr/include/c++/13/bits/allocator.h:
+
+/usr/include/c++/13/unordered_map:
+
 /usr/include/c++/13/bits/regex_automaton.tcc:
 
 /usr/include/unistd.h:
@@ -532,6 +542,10 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
 
 /usr/include/c++/13/bits/regex.tcc:
 
+/usr/include/x86_64-linux-gnu/bits/termios-tcflow.h:
+
+/usr/include/c++/13/bits/basic_string.h:
+
 /usr/include/c++/13/tr1/poly_laguerre.tcc:
 
 /usr/include/libintl.h:
@@ -539,8 +553,6 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
 /usr/include/c++/13/tr1/hypergeometric.tcc:
 
 /usr/include/c++/13/bits/range_access.h:
-
-/usr/include/c++/13/system_error:
 
 /usr/include/c++/13/bits/ptr_traits.h:
 
@@ -556,6 +568,8 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
 
 /usr/include/c++/13/bits/ostream.tcc:
 
+/usr/include/c++/13/bits/move.h:
+
 /usr/include/x86_64-linux-gnu/bits/endianness.h:
 
 /usr/include/c++/13/bits/chrono.h:
@@ -565,6 +579,8 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
 /usr/include/c++/13/bits/std_function.h:
 
 /usr/include/c++/13/bits/char_traits.h:
+
+/usr/include/c++/13/bits/hashtable_policy.h:
 
 /usr/include/c++/13/bits/stl_queue.h:
 
@@ -576,17 +592,15 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
 
 /usr/include/x86_64-linux-gnu/asm/errno.h:
 
-/usr/include/c++/13/bits/streambuf.tcc:
-
-/usr/include/c++/13/bits/specfun.h:
-
-/usr/include/c++/13/atomic:
-
 /usr/include/c++/13/bits/locale_facets.h:
 
 /usr/include/c++/13/bits/sstream.tcc:
 
 /usr/include/asm-generic/ioctls.h:
+
+/usr/include/x86_64-linux-gnu/asm/ioctl.h:
+
+/usr/include/c++/13/bits/basic_ios.tcc:
 
 /usr/include/c++/13/bits/alloc_traits.h:
 
@@ -604,13 +618,27 @@ CMakeFiles/main.dir/main.cpp.o: main.cpp \
 
 libs/bitmask.hpp:
 
+/usr/include/c++/13/bits/regex.h:
+
+/usr/include/c++/13/backward/binders.h:
+
 main.cpp:
 
 /usr/include/x86_64-linux-gnu/bits/termios-c_lflag.h:
 
 /usr/include/c++/13/bits/deque.tcc:
 
+/usr/include/x86_64-linux-gnu/bits/termios-c_cc.h:
+
+/usr/include/x86_64-linux-gnu/bits/endian.h:
+
 /usr/include/c++/13/bits/enable_special_members.h:
+
+/usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
+
+/usr/include/c++/13/bits/node_handle.h:
+
+clog.hpp:
 
 /usr/include/x86_64-linux-gnu/sys/select.h:
 
@@ -622,17 +650,19 @@ main.cpp:
 
 /usr/include/c++/13/utility:
 
-/usr/include/x86_64-linux-gnu/bits/termios.h:
-
 /usr/include/c++/13/bits/invoke.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h:
 
 /usr/include/x86_64-linux-gnu/bits/environments.h:
 
-/usr/include/c++/13/bits/istream.tcc:
+/usr/include/c++/13/bits/streambuf.tcc:
 
-/usr/include/c++/13/bits/locale_conv.h:
+/usr/include/c++/13/bits/specfun.h:
+
+/usr/include/c++/13/atomic:
+
+libs/FileManager.hpp:
 
 /usr/include/alloca.h:
 
@@ -646,6 +676,30 @@ main.cpp:
 
 /usr/include/c++/13/bits/fstream.tcc:
 
+/usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h:
+
+/usr/include/c++/13/bits/charconv.h:
+
+/usr/include/c++/13/cstdio:
+
+/usr/include/c++/13/fstream:
+
+/usr/include/x86_64-linux-gnu/bits/types/error_t.h:
+
+/usr/include/c++/13/bits/hashtable.h:
+
+/usr/include/x86_64-linux-gnu/bits/termios-c_cflag.h:
+
+/usr/include/c++/13/bits/ios_base.h:
+
+libs/queue.hpp:
+
+/usr/include/c++/13/bits/uniform_int_dist.h:
+
+/usr/include/c++/13/bits/locale_classes.tcc:
+
+/usr/include/asm-generic/ioctl.h:
+
 /usr/include/c++/13/bits/stl_vector.h:
 
 /usr/include/c++/13/bits/stl_tempbuf.h:
@@ -656,11 +710,9 @@ main.cpp:
 
 /usr/include/x86_64-linux-gnu/bits/ioctls.h:
 
-/usr/include/c++/13/bits/regex.h:
+/usr/include/c++/13/bits/istream.tcc:
 
-/usr/include/c++/13/backward/binders.h:
-
-/usr/include/asm-generic/ioctl.h:
+/usr/include/c++/13/bits/locale_conv.h:
 
 /usr/include/c++/13/ostream:
 
@@ -669,8 +721,6 @@ main.cpp:
 /usr/include/c++/13/bits/cpp_type_traits.h:
 
 /usr/include/x86_64-linux-gnu/bits/termios-baud.h:
-
-/usr/include/c++/13/bits/move.h:
 
 /usr/include/c++/13/bits/cxxabi_forced.h:
 
@@ -708,19 +758,13 @@ main.cpp:
 
 /usr/include/c++/13/bits/regex_error.h:
 
-/usr/include/c++/13/bits/basic_ios.tcc:
-
-/usr/include/x86_64-linux-gnu/asm/ioctl.h:
-
-/usr/include/x86_64-linux-gnu/bits/endian.h:
-
-/usr/include/x86_64-linux-gnu/bits/termios-c_cc.h:
-
 libs/inputManager.hpp:
 
 /usr/include/c++/13/bits/functional_hash.h:
 
 /usr/include/errno.h:
+
+/usr/include/c++/13/array:
 
 /usr/include/c++/13/bits/stl_iterator_base_funcs.h:
 
@@ -729,16 +773,6 @@ libs/inputManager.hpp:
 /usr/include/c++/13/bits/hash_bytes.h:
 
 /usr/include/x86_64-linux-gnu/bits/math-vector.h:
-
-libs/queue.hpp:
-
-/usr/include/c++/13/bits/uniform_int_dist.h:
-
-/usr/include/c++/13/bits/locale_classes.tcc:
-
-/usr/include/x86_64-linux-gnu/bits/termios-c_cflag.h:
-
-/usr/include/c++/13/bits/ios_base.h:
 
 /usr/include/x86_64-linux-gnu/bits/timesize.h:
 
@@ -756,11 +790,11 @@ libs/queue.hpp:
 
 /usr/include/c++/13/bits/memoryfwd.h:
 
-/usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
+/usr/include/c++/13/cmath:
 
-clog.hpp:
+/usr/include/c++/13/system_error:
 
-/usr/include/c++/13/bits/node_handle.h:
+/usr/include/c++/13/compare:
 
 /usr/include/c++/13/ctime:
 
@@ -803,6 +837,8 @@ clog.hpp:
 /usr/include/c++/13/ext/type_traits.h:
 
 /usr/include/x86_64-linux-gnu/bits/ioctl-types.h:
+
+/usr/include/c++/13/functional:
 
 /usr/include/c++/13/bits/std_thread.h:
 
@@ -855,10 +891,6 @@ libs/WindowMangerV2.hpp:
 /usr/include/c++/13/string:
 
 /usr/include/features-time64.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/time_t.h:
-
-/usr/include/x86_64-linux-gnu/bits/termios-struct.h:
 
 /usr/include/c++/13/thread:
 
@@ -957,11 +989,3 @@ libs/WindowMangerV2.hpp:
 /usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
 
 /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h:
-
-/usr/include/x86_64-linux-gnu/bits/termios-c_iflag.h:
-
-/usr/include/x86_64-linux-gnu/bits/termios-misc.h:
-
-/usr/include/c++/13/bits/basic_string.h:
-
-/usr/include/x86_64-linux-gnu/bits/termios-tcflow.h:
