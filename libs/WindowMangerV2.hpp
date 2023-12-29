@@ -250,7 +250,7 @@ namespace WindowManager
         size_t pos = 0;
         while ((pos = full.find(term, pos)) != std::string::npos) {
             positions.push_back(pos);
-            ++pos;
+            pos = pos + term.length();
         }
 
         return positions;
@@ -266,20 +266,9 @@ namespace WindowManager
         for (int i = 0; i < All.size(); i++)
         {
             size_t pos = All[i] + id.length();
-            if (css[pos] == ':')
-            {
-                allCss.push_back(css.substr(pos + 1, css.find_first_of('}', pos)));
-            }
-            
+
+            allCss.push_back(css.substr(pos, css.find_first_of('}', pos) - pos + 1));
         }
-        
-
-        size_t beginning = css.find("#" + id);
-        if (beginning == std::string::npos){return std::vector<std::string>();}
-        size_t ekasulje = css.find_first_of('{', beginning);
-        size_t tokasulje = css.find_first_of('}', ekasulje);
-
-        allCss.push_back(css.substr(ekasulje, tokasulje-ekasulje));
         return allCss;
     }
 
@@ -384,6 +373,7 @@ namespace WindowManager
     }
 
     enum EVENT{
+        BEGINNING,
         NONE,
         HOVER,
         ACTIVE
@@ -445,77 +435,34 @@ namespace WindowManager
 
         virtual void ExtraParse(std::string css){}
 
-        virtual void ParseCss(){
-
-            std::vector<std::string> lines;
+        virtual void cssSelectorSepreator(){
 
             for (int i = 0; i < css.size(); i++)
             {
-                if (css[i][0] != '{')
-                {
-                    size_t br = css[i].find_first_of('{');
-                    if (css[i].substr(0, br).find("hover") != std::string::npos)
-                    {
-                        css_events.find(EVENT::HOVER)->second = css[i];
-                    }else if (css[i].substr(0, br).find("active") != std::string::npos)
-                    {
-                        css_events.find(EVENT::ACTIVE)->second = css[i];
-                    }
-                    
-                    continue;
-                }
-
-                css_events.find(EVENT::NONE)->second = css[i];
-                
+                size_t br = css[i].find_first_of('{');
                 std::string defaul = css[i]; 
 
-                if(defaul.length() == 0){
-                    return;
-                }
-
+                if (css[i].substr(0, br).find("hover") != std::string::npos)
                 {
-                    auto a = defaul.find_first_of('{');
-                    defaul = defaul.substr(a, defaul.find_last_of('}')-a);
+                    css_events.find(EVENT::HOVER)->second = defaul;
                 }
-
-                size_t pos = 0;
-                while (true)
+                else if (css[i].substr(0, br).find("active") != std::string::npos)
                 {
-                    size_t c = defaul.find(";", pos);
-                    
-                    if(c == std::variant_npos)
-                        break;
-
-                    lines.push_back(defaul.substr(pos + 1, c-pos));
-                    pos = c + 1;
+                    css_events.find(EVENT::ACTIVE)->second = defaul;
                 }
-
-                std::vector<std::thread> thr;
-
-                for (int i = 0; i < lines.size(); i++)
-                {
-                    size_t kp = lines[i].find_first_of(':');
-                    auto cb = map[trim(lines[i].substr(0, kp))];
-                    
-                    if(cb) 
-                        thr.emplace_back(cb, lines[i], this);
+                else{
+                    css_events.find(EVENT::NONE)->second = defaul;
                 }
-
-                for(auto& t : thr){
-                    if (t.joinable())
-                    {
-                        t.join();
-                    }   
-                } 
             }
-            css_is_up_to_date = true;      
         }
 
-        virtual void ParseCss(std::string NewCss){
+        virtual void ParseCss(EVENT e){
 
             std::vector<std::string> lines;
 
-            std::string defaul = NewCss;
+            cssSelectorSepreator();
+
+            std::string defaul = css_events.find(e)->second;
 
             if(defaul.length() == 0){
                 return;
@@ -527,7 +474,6 @@ namespace WindowManager
             }
 
             size_t pos = 0;
-
             while (true)
             {
                 size_t c = defaul.find(";", pos);
@@ -556,6 +502,57 @@ namespace WindowManager
                     t.join();
                 }   
             } 
+            
+            css_is_up_to_date = true;      
+        }
+
+        virtual void ParseCss(std::string NewCss){
+
+            std::vector<std::string> lines;
+
+            std::string defaul = NewCss;
+
+            if(defaul.length() == 0){
+                return;
+            }
+
+            {
+                auto a = defaul.find_first_of('{');
+                defaul = defaul.substr(a + 1, defaul.find_last_of('}')-a);
+            }
+
+            size_t pos = 0;
+
+
+            while (true)
+            {
+                size_t c = defaul.find(";", pos);
+                
+                if(c == std::variant_npos)
+                    break;
+
+                lines.push_back(defaul.substr(pos + 1, c-pos));
+                pos = c + 1;
+            }
+
+            std::vector<std::thread> thr;
+
+            for (int i = 0; i < lines.size(); i++)
+            {
+                size_t kp = lines[i].find_first_of(':');
+                auto cb = map[trim(lines[i].substr(0, kp))];
+
+                
+                if(cb) 
+                    thr.emplace_back(cb, lines[i], this);
+            }
+
+            for(auto& t : thr){
+                if (t.joinable())
+                {
+                    t.join();
+                }   
+            } 
             css_is_up_to_date = true;      
         }
 
@@ -568,6 +565,7 @@ namespace WindowManager
         std::make_pair("position", [](std::string css, Element * E){
             std::regex relative(".*relative;?");
             std::regex absolute(".*absolute;?");
+            
             if(std::regex_match(css, relative)){
                 E->position_type = POSITIONS::RELATIVE;
             } 
@@ -579,16 +577,17 @@ namespace WindowManager
         std::make_pair("top", [](std::string css, Element * E){
              Unit u = 0;
 
-             std::regex px(".*px;?");
-             std::regex per(".*%;?");
-
+             std::string px = "px";
+             std::string per = "%";
             size_t dd = css.find_first_of(':');
+
+            
         
-            if(std::regex_match(css, px)){
+            if(css.find(px) != std::string::npos){
                 size_t end = css.find("px");
                 u = Unit(std::stod(css.substr(dd+1, end-1)), UNIT::ABSOLUT);
             }
-            else if(std::regex_match(css, per)){
+            else if(css.find(per) != std::string::npos){
                 size_t end = css.find_first_of('%');
                 u = Unit(std::stod(css.substr(dd+1, end-1)), UNIT::PERCENTAGE);
             }
@@ -597,17 +596,17 @@ namespace WindowManager
 
         std::make_pair("left", [](std::string css, Element * E){
              Unit u = 0;
-
-             std::regex px(".*px;?");
-             std::regex per(".*%;?");
+             std::string px = "px";
+             std::string per = "%";
 
             size_t dd = css.find_first_of(':');
+
         
-            if(std::regex_match(css, px)){
+            if(css.find(px) != std::string::npos){
                 size_t end = css.find("px");
                 u = Unit(std::stod(css.substr(dd+1, end-1)), UNIT::ABSOLUT);
             }
-            else if(std::regex_match(css, per)){
+            else if(css.find(per) != std::string::npos){
                 size_t end = css.find_first_of('%');
                 u = Unit(std::stod(css.substr(dd+1, end-1)), UNIT::PERCENTAGE);
             }
@@ -618,16 +617,16 @@ namespace WindowManager
         std::make_pair("height", [](std::string css, Element * E){
              Unit u = 0;
 
-             std::regex px(".*px;?");
-             std::regex per(".*%;?");
+             std::string px = "px";
+             std::string per = "%";
 
             size_t dd = css.find_first_of(':');
         
-            if(std::regex_match(css, px)){
+            if(css.find(px) != std::string::npos){
                 size_t end = css.find("px");
                 u = Unit(std::stod(css.substr(dd+1, end-1)), UNIT::ABSOLUT);
             }
-            else if(std::regex_match(css, per)){
+            else if(css.find(per) != std::string::npos){
                 size_t end = css.find_first_of('%');
                 u = Unit(std::stod(css.substr(dd+1, end-1)), UNIT::PERCENTAGE);
             }
@@ -638,16 +637,16 @@ namespace WindowManager
         std::make_pair("width", [](std::string css, Element * E){
              Unit u = 0;
 
-             std::regex px(".*px;?");
-             std::regex per(".*%;?");
+            std::string px = "px";
+            std::string per = "%";
 
             size_t dd = css.find_first_of(':');
         
-            if(std::regex_match(css, px)){
+            if(css.find(px) != std::string::npos){
                 size_t end = css.find("px");
                 u = Unit(std::stod(css.substr(dd+1, end-1)), UNIT::ABSOLUT);
             }
-            else if(std::regex_match(css, per)){
+            else if(css.find(per) != std::string::npos){
                 size_t end = css.find_first_of('%');
                 u = Unit(std::stod(css.substr(dd+1, end-1)), UNIT::PERCENTAGE);
             }
@@ -670,7 +669,6 @@ namespace WindowManager
         std::make_pair("background-color", [](std::string css, Element * E){
 
             std::smatch match;
-
             
             size_t kp = css.find_first_of(':');
             size_t fbr = css.find_first_of('(', kp);
@@ -868,15 +866,15 @@ namespace WindowManager
                     e = EVENT::ACTIVE;
                 }else if (onHighlight){
                     e = EVENT::HOVER;
+                }else{
+                    e = EVENT::NONE;
                 }
                 
                 if (lastEvent != e)
                 {
-                    if(onHighlight){
-                        ParseCss(css_events.find(e)->second);
-                    }else{
-                        ParseCss();
-                    }
+
+                    ParseCss(css_events.find(e)->second);
+
                     lastEvent = e;
 
                     if (e == EVENT::ACTIVE)
@@ -914,7 +912,219 @@ namespace WindowManager
 
         private:
             CallbackFunction callback_;
-            EVENT lastEvent = EVENT::NONE;
+            EVENT lastEvent = EVENT::BEGINNING;
+    };
+
+    class Checkbox : public Element{
+        public:
+
+            std::map<int, std::string> CustomStates = {
+                {2, {}},
+            };
+
+
+            std::string text;
+
+            vector2 position, size;
+
+            Color::Rgb bg;
+            Color::Rgb highlight;
+            Color::Rgb pressed;
+
+            std::vector<int> states = {0, 1, 2};
+
+            int state = 0;
+            int lastState = states[0];
+
+            std::vector<Checkbox *> friends;
+
+            Checkbox(float pa, std::string eid) : bg(0, 0, 0), highlight(0,0,0), pressed(0,0,0){
+                aspectRatio = pa;
+                id = eid;
+            }
+
+            void SetText(std::string t){
+                text = t;
+            }
+
+            void SetPosition(vector2 pos) override{
+                position = pos;
+            }
+
+            void SetSize(vector2 s) override{
+                size = s;
+            }
+
+            void SetPosition_X(Unit x) override{
+                position.x = x;
+            }
+
+            void SetPosition_Y(Unit y) override{
+                position.y = y;
+            }
+
+            void SetHeight(Unit h) override{
+                size.y = h;
+            }
+
+            void SetWidth(Unit w) override{
+                size.x = w;
+            }   
+
+            void SetCss(std::vector<std::string> cs) override{
+                css = cs;
+            }
+
+            vector2 GetPosition() const override{
+                return position;
+            }
+
+            vector2 GetSize() const override{
+                return size;
+            }
+
+            void SetBackgroundColor(Color::Rgb c) override {
+                bg = c;
+            }
+
+            void Circle(){
+                state = state % states.size();
+            }
+
+            void toggle(){
+                AddState();
+            }
+
+            void AddState(){
+                for (Checkbox* togglePtr : friends)
+                {
+                    togglePtr->DisableFromOther(id);
+                }
+
+                state += 1; 
+                clog << "before: " << state << std::endl;
+                Circle();
+                clog << "after: " << state << std::endl;
+            }
+
+            void SubstractState(){
+                state -= 1;
+                clog << "before: " << state << std::endl;
+                Circle();
+                clog << "after: " << state << std::endl;
+
+            }
+
+            void SetZero(){
+                state = false;
+            }
+
+            void DisableFromOther(std::string killer){
+                state = false;
+            }
+
+            bool Inside(){
+                vector2 siz = size;
+                vector2 pos = position;
+
+                ConvertToAbsolute(siz, pos, ScreenSize());
+
+                vector2 cursorPos = InputManager::GetMousePosition();
+                if ((cursorPos.x >= pos.x && (double)cursorPos.x <= (double)(pos.x + siz.x)) && (cursorPos.y >= pos.y && (double)cursorPos.y <= (double)(pos.y + siz.y)))
+                {
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            using CallbackFunction = std::function<void()>;
+
+            void setOnClick(CallbackFunction callback) {
+                callback_ = callback;
+            }
+
+
+            RenderElement Render(vector2 size) override{
+                EVENT e;
+                bool eventDifference =false;
+                bool onHighlight = Inside();
+                if (InputManager::GetMouseKey() == 32 && onHighlight)
+                {
+                    e = EVENT::ACTIVE;
+                }else if (onHighlight){
+                    e = EVENT::HOVER;
+                }else{
+                    e = EVENT::NONE;
+                }
+                
+                if (lastEvent != e)
+                {
+                    if (e == EVENT::ACTIVE)
+                    {
+                        toggle();    
+                        callback_();
+                        
+                    }
+                    eventDifference = true;
+                    
+                }
+
+                
+
+                if (state != lastState || lastEvent != e)
+                {
+                    std::string current_css;
+
+                    if (state == 0 && onHighlight)
+                    {
+                        current_css = css_events.find(EVENT::HOVER)->second;
+                    }
+                    else if(state == 0 && !onHighlight){
+                        current_css = css_events.find(EVENT::NONE)->second;
+                    }
+                    else if(state == 1){
+                        current_css = css_events.find(EVENT::ACTIVE)->second;
+                    }
+                    else{
+                        current_css = CustomStates.find(state)->second;
+                    }
+
+                    ParseCss(current_css);
+
+                    lastState = state;
+                    lastEvent = e;
+                }
+
+                
+
+                RenderElement RE(size);
+                vector2 textStartPos((size.x/2.0)-(double)(text.length()/2.0), size.y/2.0);
+ 
+                for (int y = 0; y < size.y; y++)
+                {
+                    for (int x = 0; x < size.x; x++)
+                    {
+                        Pixel r;
+                        r.bg = bg;
+
+                        if(y==(int)textStartPos.y && x >= (int)textStartPos.x && x < (int)textStartPos.x + (double)text.length()){
+                            r.ch = text[x-textStartPos.x];
+                        }else{
+                            r.ch = ' ';
+                        }
+
+                        RE.SetPixel(vector2(x,y), r);
+                    }   
+                }
+                
+                return RE; 
+            }
+         
+
+        private:
+            CallbackFunction callback_;
+            EVENT lastEvent = EVENT::BEGINNING;
     };
 
     RenderElement CombineRenderElements(RenderElement bottom, RenderElement top, vector2 pos){
@@ -1027,7 +1237,7 @@ namespace WindowManager
                 if (!elements[i]->OverrideCss && !elements[i]->css_is_up_to_date)
                 {
                     elements[i]->SetCss(findCssById(FullCss, elements[i]->id)); 
-                    elements[i]->ParseCss();
+                    elements[i]->ParseCss(EVENT::NONE);
                 }
                 
                 vector2 siz = elements[i]->GetSize();
@@ -1068,11 +1278,10 @@ namespace WindowManager
 
             for (int i = 0; i < this->size(); i++)
             {
-                //clog << "Rendering Element: " << i << std::endl;
                 if (!(*this)[i]->OverrideCss && !(*this)[i]->css_is_up_to_date)
                 {
                     (*this)[i]->SetCss(findCssById(FullCss, (*this)[i]->id)); 
-                    (*this)[i]->ParseCss();
+                    (*this)[i]->ParseCss(EVENT::NONE);
                 }
 
                 

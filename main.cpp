@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <unistd.h>
+#include <vector>
 
 
 void PrintOnClick(){
@@ -29,17 +30,32 @@ int main(int argc, char const *argv[])
     text->SetText("teksti 1");
     text->id = "text_1";
 
-    WindowManager::Button* text2 = new WindowManager::Button(1, "text_2");
-    text2->SetText("teksti 2");
-    text2->id = "text_2";
-    text2->setOnClick(PrintOnClick);
+    WindowManager::Button* button = new WindowManager::Button(1, "text_2");
+    button->SetText("teksti 2");
+    button->id = "text_2";
+    button->setOnClick(PrintOnClick);
 
+    WindowManager::Checkbox* toggle = new WindowManager::Checkbox(1, "text_1");
+    toggle->SetText("toggle");
+    toggle->id = "text_1";
+    toggle->setOnClick(PrintOnClick);
+
+    WindowManager::Checkbox* toggle2 = new WindowManager::Checkbox(1, "text_2");
+    toggle2->SetText("toggle 2");
+    toggle2->id = "text_2";
+    toggle2->setOnClick(PrintOnClick);
+ 
     WindowManager::Screen screen;
+
+    toggle->friends.push_back(toggle2);
+    toggle2->friends.push_back(toggle);
     
     window.id = "window";
 
-    window.AddElement(text);
-    window.AddElement(text2);
+    //window.AddElement(text);
+    //window.AddElement(button);
+    window.AddElement(toggle);
+    window.AddElement(toggle2);
 
     screen.push_back(&window);
 
