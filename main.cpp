@@ -44,6 +44,7 @@ int main(int argc, char const *argv[])
     toggle2->SetText("toggle 2");
     toggle2->id = "text_2";
     toggle2->setOnClick(PrintOnClick);
+    toggle2->AddCustomState(2, ".hehe{background-color: (255,255,255); height: 50%;}");
  
     WindowManager::Screen screen;
 

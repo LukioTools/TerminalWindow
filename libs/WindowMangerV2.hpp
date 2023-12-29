@@ -518,12 +518,10 @@ namespace WindowManager
 
             {
                 auto a = defaul.find_first_of('{');
-                defaul = defaul.substr(a + 1, defaul.find_last_of('}')-a);
+                defaul = defaul.substr(a, defaul.find_last_of('}')-a);
             }
 
             size_t pos = 0;
-
-
             while (true)
             {
                 size_t c = defaul.find(";", pos);
@@ -541,7 +539,6 @@ namespace WindowManager
             {
                 size_t kp = lines[i].find_first_of(':');
                 auto cb = map[trim(lines[i].substr(0, kp))];
-
                 
                 if(cb) 
                     thr.emplace_back(cb, lines[i], this);
@@ -552,7 +549,7 @@ namespace WindowManager
                 {
                     t.join();
                 }   
-            } 
+            }  
             css_is_up_to_date = true;      
         }
 
@@ -669,6 +666,8 @@ namespace WindowManager
         std::make_pair("background-color", [](std::string css, Element * E){
 
             std::smatch match;
+
+            clog << " ------------------" << css << std::endl;
             
             size_t kp = css.find_first_of(':');
             size_t fbr = css.find_first_of('(', kp);
@@ -919,9 +918,7 @@ namespace WindowManager
         public:
 
             std::map<int, std::string> CustomStates = {
-                {2, {}},
             };
-
 
             std::string text;
 
@@ -931,7 +928,13 @@ namespace WindowManager
             Color::Rgb highlight;
             Color::Rgb pressed;
 
-            std::vector<int> states = {0, 1, 2};
+            std::vector<int> states = {0, 1};
+
+            void AddCustomState(int state, std::string css){ 
+                CustomStates.emplace(state, css);
+                states.push_back(2);
+            }
+
 
             int state = 0;
             int lastState = states[0];
@@ -992,35 +995,34 @@ namespace WindowManager
             }
 
             void toggle(){
-                AddState();
+                AddToState();
             }
 
-            void AddState(){
-                for (Checkbox* togglePtr : friends)
-                {
-                    togglePtr->DisableFromOther(id);
-                }
+            void AddToState(){
+
 
                 state += 1; 
-                clog << "before: " << state << std::endl;
                 Circle();
-                clog << "after: " << state << std::endl;
+
+                for (Checkbox* togglePtr : friends)
+                {
+                    togglePtr->DisableFromOther(state);
+                }
             }
 
-            void SubstractState(){
+            void SubstractFromState(){
                 state -= 1;
-                clog << "before: " << state << std::endl;
                 Circle();
-                clog << "after: " << state << std::endl;
-
             }
 
             void SetZero(){
                 state = false;
             }
 
-            void DisableFromOther(std::string killer){
-                state = false;
+            void DisableFromOther(int killer){
+                if(state == killer){
+                    state = false;
+                }
             }
 
             bool Inside(){
@@ -1076,6 +1078,7 @@ namespace WindowManager
                 {
                     std::string current_css;
 
+
                     if (state == 0 && onHighlight)
                     {
                         current_css = css_events.find(EVENT::HOVER)->second;
@@ -1087,10 +1090,17 @@ namespace WindowManager
                         current_css = css_events.find(EVENT::ACTIVE)->second;
                     }
                     else{
+                        //clog << state << " : " << CustomStates.find(state)->second << std::endl;
                         current_css = CustomStates.find(state)->second;
                     }
 
+                    clog << "css a: " << CustomStates.find(state)->second << std::endl;
+
+                    clog << "current: " << current_css << std::endl;
+
                     ParseCss(current_css);
+
+                    clog << bg.r << " : " << bg.g << " : "  << bg.b << std::endl;
 
                     lastState = state;
                     lastEvent = e;
