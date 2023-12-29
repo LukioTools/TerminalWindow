@@ -1020,6 +1020,9 @@ namespace WindowManager
             }
 
             void DisableFromOther(int killer){
+
+                //TODO: lisää supportti custom funktioille, jos haluaa erilaisen "behaviour".
+
                 if(state == killer){
                     state = false;
                 }
