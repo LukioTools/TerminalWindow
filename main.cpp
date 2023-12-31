@@ -28,23 +28,22 @@ int main(int argc, char const *argv[])
 
     WindowManager::Text* text = new WindowManager::Text(1, "text_1");
     text->SetText("teksti 1");
-    text->id = "text_1";
 
     WindowManager::Button* button = new WindowManager::Button(1, "text_2");
     button->SetText("teksti 2");
-    button->id = "text_2";
     button->setOnClick(PrintOnClick);
 
     WindowManager::Checkbox* toggle = new WindowManager::Checkbox(1, "text_1");
     toggle->SetText("toggle");
-    toggle->id = "text_1";
     toggle->setOnClick(PrintOnClick);
 
     WindowManager::Checkbox* toggle2 = new WindowManager::Checkbox(1, "text_2");
     toggle2->SetText("toggle 2");
-    toggle2->id = "text_2";
     toggle2->setOnClick(PrintOnClick);
     toggle2->AddCustomState(2, ".hehe{background-color: (255,255,255); height: 50%;}");
+
+    WindowManager::InputField* inputfield = new WindowManager::InputField(1, "InputField");
+    toggle2->SetText("toggle 2");
  
     WindowManager::Screen screen;
 
@@ -57,6 +56,7 @@ int main(int argc, char const *argv[])
     //window.AddElement(button);
     window.AddElement(toggle);
     window.AddElement(toggle2);
+    window.AddElement(inputfield);
 
     screen.push_back(&window);
 
@@ -89,17 +89,11 @@ int main(int argc, char const *argv[])
         if(InputManager::GetKeyDown('s')){
             //text->SetPosition(text->GetPosition() + InputManager::vector2(0,1));
         }
-
-        if(InputManager::GetKeyDown('t')){
-            CLEAR_TERMINAL()
-        }
-
-        if(InputManager::GetKey() != 0){
-        }
         
         if(lastMousePos.x != InputManager::GetMousePosition().x && lastMousePos.y != InputManager::GetMousePosition().y){
             lastMousePos = InputManager::GetMousePosition();
         } 
+
         //clog << WindowManager::vector2(InputManager::GetMousePosition()) << std::endl;      
         //clog << InputManager::GetMouseKey() << std::endl;
         

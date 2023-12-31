@@ -14,6 +14,14 @@
     background-color: (56,32,100);
 }
 
+#InputField{
+    top: 50%;
+    left: 0px;
+    width: 50%;
+    height: 50%;
+    background-color: (204,34,198);
+}
+
 #window{
     top: 0px; 
     left: 0px; 
@@ -35,4 +43,8 @@
 
 #text_1:active{
     background-color: (0,255,0);
+}
+
+#InputField:active{
+    background-color: (255,0,0);
 }

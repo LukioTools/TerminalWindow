@@ -666,8 +666,6 @@ namespace WindowManager
         std::make_pair("background-color", [](std::string css, Element * E){
 
             std::smatch match;
-
-            clog << " ------------------" << css << std::endl;
             
             size_t kp = css.find_first_of(':');
             size_t fbr = css.find_first_of('(', kp);
@@ -762,9 +760,152 @@ namespace WindowManager
                     Pixel r;
                     r.bg = Color::Rgb(bg.r, bg.g, bg.b);//COLOR_BG(bg.r, bg.g, bg.b);
 
-                    if(y==textStartPos.y && x >= textStartPos.x && x < textStartPos.x + (double)text.length()){
+                    if(y==(int)textStartPos.y && x >= (int)textStartPos.x && x < (int)textStartPos.x + (double)text.length()){
                         r.ch = text[x-textStartPos.x];
                     }else{
+                        r.ch = ' ';
+                    }
+
+                    RE.SetPixel(vector2(x,y), r);
+                }   
+            }
+            return RE; 
+        }
+    };
+
+    class InputField : public Element{
+        public:
+        std::string text;
+        Color::Rgb bg;
+
+        vector2 position, size;
+
+        EVENT lastEvent;
+
+        bool state;
+        bool lastState;
+
+        
+        InputField(float pa, std::string eid) : bg(0, 0, 0){
+            aspectRatio = pa;
+            id = eid;
+        }
+
+        void SetText(std::string t){
+            text = t;
+        }
+
+        void SetPosition(vector2 pos) override{
+            position = pos;
+        }
+
+        void SetSize(vector2 s) override{
+            size = s;
+        }
+
+        void SetPosition_X(Unit x) override{
+            position.x = x;
+        }
+
+        void SetPosition_Y(Unit y) override{
+            position.y = y;
+        }
+
+        void SetHeight(Unit h) override{
+            size.y = h;
+        }
+
+        void SetWidth(Unit w) override{
+            size.x = w;
+        }
+
+        void SetBackgroundColor(Color::Rgb c) override {
+            bg = c;
+        }
+
+        vector2 GetPosition() const override{
+            return position;
+        }
+
+        vector2 GetSize() const override{
+            return size;
+        }
+
+        void SetCss(std::vector<std::string> cs) override{
+            css = cs;
+        }
+
+        void Toggle(){
+            state = !state;
+        }
+
+        bool Inside(){
+            vector2 siz = size;
+            vector2 pos = position;
+
+            ConvertToAbsolute(siz, pos, ScreenSize());
+
+            vector2 cursorPos = InputManager::GetMousePosition();
+            if ((cursorPos.x >= pos.x && (double)cursorPos.x <= (double)(pos.x + siz.x)) && (cursorPos.y >= pos.y && (double)cursorPos.y <= (double)(pos.y + siz.y)))
+            {
+                return true;
+            }else{
+                return false;
+            }
+        }
+
+        RenderElement Render(vector2 size) override{
+
+            EVENT e;
+
+            bool onHighlight = Inside();
+            if (InputManager::GetMouseKey() == 32 && onHighlight)
+            {
+                e = EVENT::ACTIVE;
+            }else if (onHighlight){
+                e = EVENT::HOVER;
+            }else{
+                e = EVENT::NONE;
+            }
+            
+            if (lastEvent != e)
+            {
+
+                ParseCss(css_events.find(e)->second);
+
+                if (e == EVENT::ACTIVE)
+                {
+                    Toggle();
+                } 
+                lastEvent = e;
+            }
+
+            if (state == true)
+            {
+                int input = InputManager::GetKey(); 
+                if(input != 0 && input != 127){
+                    text += (char)InputManager::GetKey();
+                }else if(input == 127){
+                    text.pop_back();
+                }
+            }
+
+            clog << "string: " << text << std::endl;
+
+            RenderElement RE(size);
+            vector2 textStartPos((size.x/2.0)-(double)(text.length()/2.0), size.y/2.0);
+            
+            for (int y = 0; y < size.y; y++)
+            {
+                for (int x = 0; x < size.x; x++)
+                {
+                    Pixel r;
+                    r.bg = Color::Rgb(bg.r, bg.g, bg.b);//COLOR_BG(bg.r, bg.g, bg.b);
+
+                    if(y== floor(textStartPos.y) && x >= ceil(textStartPos.x) && x < ceil(textStartPos.x) + text.length()){
+                        r.ch = text[x-textStartPos.x];
+                    }
+                    else{
                         r.ch = ' ';
                     }
 
@@ -895,7 +1036,7 @@ namespace WindowManager
                         Pixel r;
                         r.bg = bg;
 
-                        if(y==textStartPos.y && x >= textStartPos.x && x < textStartPos.x + (double)text.length()){
+                        if(y==(int)textStartPos.y && x >= (int)textStartPos.x && x < (int)textStartPos.x + (double)text.length()){
                             r.ch = text[x-textStartPos.x];
                         }else{
                             r.ch = ' ';
@@ -1093,17 +1234,10 @@ namespace WindowManager
                         current_css = css_events.find(EVENT::ACTIVE)->second;
                     }
                     else{
-                        //clog << state << " : " << CustomStates.find(state)->second << std::endl;
                         current_css = CustomStates.find(state)->second;
                     }
 
-                    clog << "css a: " << CustomStates.find(state)->second << std::endl;
-
-                    clog << "current: " << current_css << std::endl;
-
                     ParseCss(current_css);
-
-                    clog << bg.r << " : " << bg.g << " : "  << bg.b << std::endl;
 
                     lastState = state;
                     lastEvent = e;

@@ -12,15 +12,12 @@
 #include <iostream>
 #include <vector>
 
-
 //#include "./Camera.hpp"
 #define log(smth) std::cout << smth << std::endl;
 
 namespace tcp{
-
     class tcp_server
     {
-        
         private:
         std::thread thread_obj; // Store the thread as a member variable.
         int sockfd;
@@ -88,16 +85,15 @@ namespace tcp{
                 if (n < 0) error("ERROR reading from socket");
         
                 std::string unclean = std::string(buffer);
-                unclean.erase(std::remove(unclean.begin(), unclean.end(), '\n'), unclean.cend());
                 
-                //log(unclean.size() << " " << std::string("pos").size())
+                log(unclean.size() << " " << std::string("pos").size())
 
                 if (unclean == "pos")
                 {
                     log("sending scene");
-                    //std::string m = scene.toJson();
-                    //log(m);
-                    //n = write(newsockfd,m.c_str(),m.size());
+                    std::string m = "message";
+                    log(m);
+                    n = write(newsockfd,m.c_str(),m.size());
                 }    
 
                 if (n < 0) error("ERROR writing to socket");  

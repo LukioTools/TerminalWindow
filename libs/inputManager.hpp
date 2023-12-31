@@ -36,6 +36,10 @@ namespace InputManager
 #define enable_mouse(type) ("\e[?"+     std::to_string(type)    +"h")
 #define disable_mouse(type) ("\e[?"+    std::to_string(type)    +"l")
 
+
+bool overrideKeyboard = false;
+bool overrideMouse = false;
+
 class vector2{
     public:
     int x, y;
