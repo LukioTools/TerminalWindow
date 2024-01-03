@@ -388,6 +388,8 @@ namespace WindowManager
             {ACTIVE, {}},
         };
 
+        bool Enabled = true;
+
         double aspectRatio = 0;
 
         bool OverrideCss = false;
@@ -785,6 +787,8 @@ namespace WindowManager
         bool state;
         bool lastState;
 
+        using CallbackFunction = std::function<void(InputField&)>;
+
         
         InputField(float pa, std::string eid) : bg(0, 0, 0){
             aspectRatio = pa;
@@ -856,6 +860,10 @@ namespace WindowManager
 
         RenderElement Render(vector2 size) override{
 
+            if(!Enabled){
+                return RenderElement(vector2(0,0));
+            }
+
             EVENT e;
 
             bool onHighlight = Inside();
@@ -877,6 +885,9 @@ namespace WindowManager
                 {
                     Toggle();
                 } 
+                else if(e == EVENT::NONE){
+                    state = false;
+                }
                 lastEvent = e;
             }
 
@@ -887,10 +898,11 @@ namespace WindowManager
                     text += (char)InputManager::GetKey();
                 }else if(input == 127){
                     text.pop_back();
+                }else if(input == 10){
+                    if (onDone)
+                    onDone(*this);
                 }
             }
-
-            clog << "string: " << text << std::endl;
 
             RenderElement RE(size);
             vector2 textStartPos((size.x/2.0)-(double)(text.length()/2.0), size.y/2.0);
@@ -914,6 +926,9 @@ namespace WindowManager
             }
             return RE; 
         }
+
+        private:
+            CallbackFunction onDone;
     };
 
     class Button : public Element{
@@ -1034,11 +1049,12 @@ namespace WindowManager
                     for (int x = 0; x < size.x; x++)
                     {
                         Pixel r;
-                        r.bg = bg;
+                        r.bg = Color::Rgb(bg.r, bg.g, bg.b);//COLOR_BG(bg.r, bg.g, bg.b);
 
-                        if(y==(int)textStartPos.y && x >= (int)textStartPos.x && x < (int)textStartPos.x + (double)text.length()){
+                        if(y== floor(textStartPos.y) && x >= ceil(textStartPos.x) && x < ceil(textStartPos.x) + text.length()){
                             r.ch = text[x-textStartPos.x];
-                        }else{
+                        }
+                        else{
                             r.ch = ' ';
                         }
 
@@ -1061,6 +1077,12 @@ namespace WindowManager
             std::map<int, std::string> CustomStates = {
             };
 
+            std::map<std::string, std::string> CustomAttributes = {                
+            };
+
+            using CallbackFunction = std::function<void()>;
+            using CallbackFunctionClass = std::function<void(Checkbox&)>;
+
             std::string text;
 
             vector2 position, size;
@@ -1073,6 +1095,11 @@ namespace WindowManager
 
             void AddCustomState(int state, std::string css){ 
                 CustomStates.emplace(state, css);
+                states.push_back(2);
+            }
+
+            void AddCustomAttribute(std::string name, std::string data){ 
+                CustomAttributes.emplace(name, data);
                 states.push_back(2);
             }
 
@@ -1138,6 +1165,8 @@ namespace WindowManager
             void toggle(){
                 AddToState();
             }
+            
+            
 
             void AddToState(){
 
@@ -1147,13 +1176,14 @@ namespace WindowManager
 
                 for (Checkbox* togglePtr : friends)
                 {
-                    togglePtr->DisableFromOther(state);
+                    togglePtr->SubstractFromState();
                 }
             }
 
             void SubstractFromState(){
-                state -= 1;
-                Circle();
+                if(state != 0)
+                    state -= 1;
+                
             }
 
             void SetZero(){
@@ -1184,10 +1214,14 @@ namespace WindowManager
                 }
             }
 
-            using CallbackFunction = std::function<void()>;
+            
 
             void setOnClick(CallbackFunction callback) {
-                callback_ = callback;
+                onClickCallback_ = callback;
+            }
+
+            void setOnStateChange(CallbackFunctionClass callback){
+                onStateChangeCallback_ = callback;
             }
 
 
@@ -1208,18 +1242,23 @@ namespace WindowManager
                 {
                     if (e == EVENT::ACTIVE)
                     {
-                        toggle();    
-                        callback_();
+                        toggle();   
+                        if (onClickCallback_)                         
+                            onClickCallback_();
                         
                     }
                     eventDifference = true;
                     
                 }
 
-                
-
                 if (state != lastState || lastEvent != e)
                 {
+
+                    if(state != lastState){
+                        if (onStateChangeCallback_)                      
+                            onStateChangeCallback_(*this);
+                    }
+
                     std::string current_css;
 
 
@@ -1247,30 +1286,32 @@ namespace WindowManager
 
                 RenderElement RE(size);
                 vector2 textStartPos((size.x/2.0)-(double)(text.length()/2.0), size.y/2.0);
- 
+                
                 for (int y = 0; y < size.y; y++)
                 {
                     for (int x = 0; x < size.x; x++)
                     {
                         Pixel r;
-                        r.bg = bg;
+                        r.bg = Color::Rgb(bg.r, bg.g, bg.b);//COLOR_BG(bg.r, bg.g, bg.b);
 
-                        if(y==(int)textStartPos.y && x >= (int)textStartPos.x && x < (int)textStartPos.x + (double)text.length()){
+                        if(y== floor(textStartPos.y) && x >= ceil(textStartPos.x) && x < ceil(textStartPos.x) + text.length()){
                             r.ch = text[x-textStartPos.x];
-                        }else{
+                        }
+                        else{
                             r.ch = ' ';
                         }
 
                         RE.SetPixel(vector2(x,y), r);
                     }   
-                }
-                
+                }  
+
                 return RE; 
             }
          
 
         private:
-            CallbackFunction callback_;
+            CallbackFunctionClass onStateChangeCallback_;
+            CallbackFunction onClickCallback_;
             EVENT lastEvent = EVENT::BEGINNING;
     };
 

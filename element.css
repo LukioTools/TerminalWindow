@@ -1,22 +1,42 @@
-#text_1{
+#cam1{
     top: 0px;
     left: 0px; 
+
     width: 50%; 
     height: 50%; 
     background-color: (56,32,100);
 }
 
-#text_2{
+#cam2{
     top: 0px; 
-    left: 50%  ; 
+    left: 50%; 
+
+    width: 50%; 
+    height: 50%; 
+    background-color: (56,32,100);
+}
+
+#cam3{
+    top: 50%;
+    left: 0px; 
+
+    width: 50%; 
+    height: 50%; 
+    background-color: (56,32,100);
+}
+
+#cam4{
+    top: 50%; 
+    left: 50%; 
+
     width: 50%; 
     height: 50%; 
     background-color: (56,32,100);
 }
 
 #InputField{
-    top: 50%;
-    left: 0px;
+    top: 25%;
+    left: 25%;
     width: 50%;
     height: 50%;
     background-color: (204,34,198);
@@ -29,19 +49,35 @@
     height: 100%;
 }
 
-#text_2:hover{
+#cam1:hover{
     background-color: (255,0,0);
 }
 
-#text_2:active{
+#cam1:active{
     background-color: (0,255,0);
 }
 
-#text_1:hover{
+#cam2:hover{
     background-color: (255,0,0);
 }
 
-#text_1:active{
+#cam2:active{
+    background-color: (0,255,0);
+}
+
+#cam3:hover{
+    background-color: (255,0,0);
+}
+
+#cam3:active{
+    background-color: (0,255,0);
+}
+
+#cam4:hover{
+    background-color: (255,0,0);
+}
+
+#cam4:active{
     background-color: (0,255,0);
 }
 
