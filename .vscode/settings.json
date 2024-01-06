@@ -76,5 +76,6 @@
         "coroutine": "cpp",
         "source_location": "cpp",
         "*.ipp": "cpp"
-    }
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }

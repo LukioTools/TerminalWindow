@@ -1,14 +1,21 @@
 #pragma once
 
+#include <boost/asio/ip/udp.hpp>
+#include <boost/asio/read_until.hpp>
 #include <iostream>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include <vector>
 #include <thread>
 #include <chrono>
+
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/steady_timer.hpp>
+#include <boost/asio.hpp>
+
 #include <functional>
+
+#include "../clog.hpp"
 
 namespace TCP{
 
@@ -23,50 +30,67 @@ namespace TCP{
             
             }
 
+            struct clientData{
+                std::string name;
+                std::shared_ptr<boost::asio::ip::tcp::socket> client;
+                std::shared_ptr<boost::asio::steady_timer> heartbeatTimer;
+            };
 
-            // UNIQUE ID FOR ESP (will be saved to esp memory), {NAME, SOCKET CLIENT}
-            std::map<int, std::pair<std::string, std::shared_ptr<boost::asio::ip::tcp::socket>>> TallyGuys = {
+
+            // UNIQUE ID FOR ESP (will be saved to esp memory), {NAME (will be saved in esp memory), SOCKET CLIENT}
+            std::map<int, clientData> TallyGuys = {
             };
 
             int currentId = 0;
 
-            void ChangeState(std::string name, std::string state){
-                std::shared_ptr<boost::asio::ip::tcp::socket> client = TallyGuys.find(findClient(name))->second.second;
+            void ChangeState(int id, std::string state){
+                
+                std::shared_ptr<boost::asio::ip::tcp::socket> client = TallyGuys.find(id)->second.client;
                 std::string message = "6: -" + state + "-";
-                SendMessage(client, message);
+                sendSyncMessage(client, message);
             }
             
-        /*
-        Servers message meanings:
+            /*
+            Servers message meanings:
 
-            "2": asks if esp has allready an id
-                "3: -[id]-" sets id;
-                "4": asking name;
-            "5: -[name]-", sets name
+                "2": asks if esp has allready an id
+                    "3: -[id]-" sets id;
+                    "4": asking name;
+                "5: -[name]-", sets name
 
-            "6: -[state]-": sets current state;
-        
-        Client message meanings:
-            "0": failed
-            "1": success
-            "2: f/[number]"", f = no id, [number] = has id, and it is...
-            "3: -[name]-"
-        */
+                "6: -[state]-": sets current state;
+            
+            Client message meanings:
+                "0": failed
+                "1": success
+                "2: f/[number]"", f = no id, [number] = has id, and it is...
+                "3: -[name]-"
+            */
 
-        std::function<void()> OnNewClient;
+            std::function<void(std::shared_ptr<boost::asio::ip::tcp::socket>)> OnNewClient;
+            std::function<void(int)> OnDisconnectClient;
 
-        void SendMessage(std::shared_ptr<boost::asio::ip::tcp::socket> client, std::string message){
-                boost::asio::async_write(*client, boost::asio::buffer(message),
-                    boost::bind(&TCPServer::HandleWrite, this, boost::asio::placeholders::error));
+            void SendMessage(std::shared_ptr<boost::asio::ip::tcp::socket> client, std::string message){
+                    boost::asio::async_write(*client, boost::asio::buffer(message),
+                        boost::bind(&TCPServer::HandleWrite, this, boost::asio::placeholders::error));
             }
 
             void sendSyncMessage(std::shared_ptr<boost::asio::ip::tcp::socket> client, std::string message){
-                boost::asio::write(*client, boost::asio::buffer(message));
+                    boost::system::error_code write_error;
+                    boost::asio::write(*client, boost::asio::buffer(message), write_error);
+                    //clog << "sendSyncMessage error code: " << write_error.message() << std::endl;
+            }
+
+            void sendSyncMessage(std::shared_ptr<boost::asio::ip::tcp::socket> client, std::string message, boost::system::error_code& write_error){
+                    
+                    boost::asio::write(*client, boost::asio::buffer(message), write_error);
+                    //clog << "sendSyncMessage error code 2 : " << write_error.message() << std::endl;
             }
 
             std::string ReadUntilSync(std::shared_ptr<boost::asio::ip::tcp::socket> client){
                 boost::system::error_code readError;
                 boost::asio::read_until(*client, readBuffer_, '\n', readError);
+                //clog << "ReadUntilSync error code: " << readError.message() << std::endl;
 
                 std::istream is(&readBuffer_);
                 std::string message;
@@ -75,7 +99,39 @@ namespace TCP{
                 return message;
             }
 
+            std::string ReadUntilSync(std::shared_ptr<boost::asio::ip::tcp::socket> client, boost::system::error_code readError){
+                boost::asio::read_until(*client, readBuffer_, '\n', readError);
+                //clog << "ReadUntilSync error code 2 : " << readError.message() << std::endl;
+
+                std::istream is(&readBuffer_);
+                std::string message;
+                std::getline(is, message);
+
+                return message;
+            }
+
+            void StartHeartbeatForClient(int clientId) {
+                auto clientIt = TallyGuys.find(clientId);
+                if (clientIt != TallyGuys.end()) {
+                    auto& heartbeatTimer = clientIt->second.heartbeatTimer;
+                    heartbeatTimer = std::make_shared<boost::asio::steady_timer>(acceptor_.get_executor());
+                    HeartbeatForClient(clientId);
+                }
+            }
+
+            void StopHeartbeatForClient(int clientId) {
+                auto clientIt = TallyGuys.find(clientId);
+                if (clientIt != TallyGuys.end() && clientIt->second.heartbeatTimer) {
+                    clientIt->second.heartbeatTimer->cancel();
+                }
+            }
+
         private:
+
+            void handle_read(const boost::system::error_code& error, std::size_t bytes_transferred) {
+            }
+
+
             void StartAccept() {
                 acceptor_.async_accept(socket_,
                     boost::bind(&TCPServer::HandleAccept, this, boost::asio::placeholders::error));
@@ -83,20 +139,11 @@ namespace TCP{
 
             void HandleAccept(const boost::system::error_code& error) {
                 if (!error) {
-                    //std::cout << "Client connected: " << socket_.remote_endpoint() << std::endl;
-
-                    auto client = std::make_shared<boost::asio::ip::tcp::socket>(std::move(socket_));
-
-                    //SendMessage(client, "2");
-
-                    //StartRead(client);
-                    
+                    auto client = std::make_shared<boost::asio::ip::tcp::socket>(std::move(socket_));            
                     clients.push_back(client);
-
                     if(OnNewClient){
-                        OnNewClient();
+                        OnNewClient(clients[clients.size()-1]);
                     }
-
                     StartAccept();
 
                 } else {
@@ -123,115 +170,81 @@ namespace TCP{
             }
 
             void HandleRead(const std::shared_ptr<boost::asio::ip::tcp::socket>& client, const boost::system::error_code& error) {
-                if (!error) {
-                    std::istream is(&readBuffer_);
-                    std::string message;
-                    std::getline(is, message);
-
-                    //std::cout << "Received from client: " << message << std::endl;
-
-                    // initialization
-                    if(message[0] == '2'){
-                        if(message.find_first_of('f') != std::string::npos){
-                            int id;
-                            std::string name;
-
-                            currentId ++;
-
-                            // sends new id 
-                            std::string responce = "3: -" + std::to_string(currentId) + "-";
-                            boost::asio::write(*client, boost::asio::buffer(responce));
-
-                            //Making sure its good
-                            boost::system::error_code readError;
-                            boost::asio::read_until(*client, readBuffer_, '\n', readError);
-
-                            std::istream is(&readBuffer_);
-                            std::string message;
-                            std::getline(is, message);
-
-                            if(message[0] != '1'){
-                                //std::cout << "failed: " << message;
-                                return;
-                            }
-
-                            // Asking for name;
-                            responce = "4";
-                            boost::asio::write(*client, boost::asio::buffer(responce));
-
-                            boost::asio::read_until(*client, readBuffer_, '\n', readError);
-
-                            if(!readError){
-                                std::istream is(&readBuffer_);
-                                std::string message;
-                                std::getline(is, message);
-
-                                size_t first = message.find_first_of('-'); 
-                                size_t second = message.find_first_of('-', first + 1);
-
-                                name = message.substr(first + 1, second-first);
-                                id = currentId;
-
-                                TallyGuys.insert({id, {name, client}});
-
-                            }else{
-                                std::cerr << "Error reading from client: " << error.message() << std::endl;
-                            }
-                        }else{
-                            size_t first = message.find_first_of('-');
-                            size_t second = message.find_first_of('-', first + 1);
-
-                            int id = std::stoi(message.substr(first + 1, second));
-
-                            std::string responce = "4";
-                            boost::asio::write(*client, boost::asio::buffer(responce));
-
-                            boost::system::error_code readError;
-                            boost::asio::read_until(*client, readBuffer_, '\n', readError);
-
-                            if(!readError){
-                                std::istream is(&readBuffer_);
-                                std::string message;
-                                std::getline(is, message);
-
-                                size_t first = message.find_first_of('-'); 
-                                size_t second = message.find_first_of('-', first + 1);
-
-                                std::string name = message.substr(first + 1, second-first);
-
-                                auto it = TallyGuys.find(id);
-                                if (it != TallyGuys.end()) {
-                                    it->second = {name, client};
-                                } else {
-                                    TallyGuys.insert({id, {name, client}});
-
-                                }
-
-                            }else{
-                                std::cerr << "Error reading from client: " << error.message() << std::endl;
-                            }
-                        }
-                    }
-
-                    StartRead(client);
-
-                } else {
-                    std::cerr << "Error reading from client: " << error.message() << std::endl;
-
-                    // If there's an error, you may want to handle disconnection or remove the client
-                    // clients.erase(std::remove(clients.begin(), clients.end(), client), clients.end());
-                }
+                    clog << "async receive: " << error.message() << std::endl;
             }
 
             int findClient(std::string name){
                 for (auto it = TallyGuys.begin(); it != TallyGuys.end(); ++it) {
-                    if (it->second.first == name) {
+                    if (it->second.name == name) {
                         return it->first;
                     }
                 }
                 return -1;
             }
 
+            void HandleTimeout(const boost::system::error_code& error) {
+                if (error != boost::asio::error::operation_aborted) {
+                    // Timeout occurred
+                    // You can handle the timeout here and cancel the read operation if needed
+                    //clientSocket->cancel(); // Cancel the read operation
+                    clog << "timeout" << std::endl;
+                }
+            }
+
+            void HeartbeatForClient(int clientId){
+                auto clientIt = TallyGuys.find(clientId);
+
+                if (clientIt == TallyGuys.end()) {return;}
+
+                auto& clientSocket = clientIt->second.client;
+                auto& heartbeatTimer = clientIt->second.heartbeatTimer;
+
+                sendSyncMessage(clientSocket, "h");
+
+                boost::system::error_code _error_code;
+
+                std::atomic<bool> terminateThread(false);
+                std::atomic<bool> died(false);
+
+                std::thread th = std::thread([&](){
+                    int count = 0;
+                    while (!terminateThread) {
+                        count ++;
+                        if(count == 2000) break;
+                        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                    }
+                    if (!terminateThread)
+                    {
+                        died = true;
+                        clientSocket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, _error_code);
+                    }
+                });
+
+                ReadUntilSync(clientSocket);
+                terminateThread = true;
+
+                th.join();
+
+                if(died){
+                    OnDisconnectClient(clientId);
+                    return;
+                }
+
+                if(_error_code)
+                {
+                    OnDisconnectClient(clientId);
+                }else{
+                    boost::system::error_code error;
+                    heartbeatTimer->expires_after(std::chrono::seconds(2));
+                    heartbeatTimer->async_wait([this, clientId](const boost::system::error_code& error) {
+                        if (!error) {
+                            HeartbeatForClient(clientId);
+                        }
+                    });
+                } 
+            }
+
+            std::shared_ptr<boost::asio::steady_timer> heartbeatTimer_;
             boost::asio::ip::tcp::acceptor acceptor_;
             boost::asio::ip::tcp::socket socket_;
             std::vector<std::shared_ptr<boost::asio::ip::tcp::socket>> clients;

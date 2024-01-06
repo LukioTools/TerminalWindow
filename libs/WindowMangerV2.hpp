@@ -383,10 +383,32 @@ namespace WindowManager
 
         public:
         std::map<EVENT, std::string> css_events = {
-            {NONE, {}},
-            {HOVER, {}},
-            {ACTIVE, {}},
+            {NONE, ""},
+            {HOVER, ""},
+            {ACTIVE, ""},
         };
+
+        std::map<std::string, std::string> CustomAttributes = {                
+            };
+
+        void AddCustomAttribute(std::string name, std::string data){ 
+            auto i = CustomAttributes.find(name);
+            if (CustomAttributes.find(name) == CustomAttributes.end())
+            {
+                CustomAttributes.emplace(name, data);
+            }else{
+                i->second = data;
+            }       
+        }
+
+        std::string FindCustomAttribute(std::string name){
+            auto it = CustomAttributes.find(name);
+            if(it != CustomAttributes.end())
+                return CustomAttributes.find(name)->second;
+            else{
+                return "";
+            }
+        }
 
         bool Enabled = true;
 
@@ -398,6 +420,10 @@ namespace WindowManager
 
         std::string id;
         std::vector<std::string> css;
+
+        virtual void SetId(std::string eid){
+            id = eid;
+        }
 
         virtual double GetPreferedAspectRatio() const {
             return aspectRatio;
@@ -752,6 +778,7 @@ namespace WindowManager
         }
 
         RenderElement Render(vector2 size) override{
+            
             RenderElement RE(size);
             vector2 textStartPos((size.x/2.0)-(double)(text.length()/2.0), size.y/2.0);
             
@@ -771,6 +798,34 @@ namespace WindowManager
                     RE.SetPixel(vector2(x,y), r);
                 }   
             }
+
+            //Adding border:
+            //vertical
+            for (int y = 0; y < size.y; y++)
+            {
+                Pixel p0 = RE.GetPixel(vector2(0, y));
+                Pixel p1 = RE.GetPixel(vector2(size.x - 1, y));
+
+                p0.ch = '|';
+                p1.ch = '|';
+
+                RE.SetPixel(vector2(0,y), p0); 
+                RE.SetPixel(vector2(size.x - 1,y), p1); 
+            }
+
+            //horizontal
+            for (int x = 0; x < size.x; x++)
+            {
+                Pixel p0 = RE.GetPixel(vector2(x,0));
+                Pixel p1 = RE.GetPixel(vector2(x, size.y - 1));
+
+                p0.ch = '-';
+                p1.ch = '-';
+
+                RE.SetPixel(vector2(x,0), p0);
+                RE.SetPixel(vector2(x,size.y - 1), p1);
+            }
+            
             return RE; 
         }
     };
@@ -793,6 +848,12 @@ namespace WindowManager
         InputField(float pa, std::string eid) : bg(0, 0, 0){
             aspectRatio = pa;
             id = eid;
+            std::cout << "id: " << eid << " : " << this->id << std::endl;
+            //SetId(eid);
+        }
+
+        void SetOnDone(CallbackFunction c){
+            onDone = c;
         }
 
         void SetText(std::string t){
@@ -894,16 +955,18 @@ namespace WindowManager
             if (state == true)
             {
                 int input = InputManager::GetKey(); 
-                if(input != 0 && input != 127){
+                if(input != 0 && input != 127 && input != 10){
                     text += (char)InputManager::GetKey();
                 }else if(input == 127){
-                    text.pop_back();
+                    if(text.size() != 0)
+                        text.pop_back();
                 }else if(input == 10){
                     if (onDone)
                     onDone(*this);
                 }
             }
 
+            
             RenderElement RE(size);
             vector2 textStartPos((size.x/2.0)-(double)(text.length()/2.0), size.y/2.0);
             
@@ -924,6 +987,36 @@ namespace WindowManager
                     RE.SetPixel(vector2(x,y), r);
                 }   
             }
+
+            //Adding border:
+            //vertical
+            
+            for (int y = 0; y < size.y; y++)
+            {
+                Pixel p0 = RE.GetPixel(vector2(0, y));
+                Pixel p1 = RE.GetPixel(vector2(size.x - 1, y));
+
+                p0.ch = '|';
+                p1.ch = '|';
+
+                RE.SetPixel(vector2(0,y), p0); 
+                RE.SetPixel(vector2(size.x - 1,y), p1); 
+            }
+
+            //horizontal
+            for (int x = 0; x < size.x; x++)
+            {
+                Pixel p0 = RE.GetPixel(vector2(x,0));
+                Pixel p1 = RE.GetPixel(vector2(x, size.y - 1));
+
+                p0.ch = '-';
+                p1.ch = '-';
+
+                RE.SetPixel(vector2(x,0), p0);
+                RE.SetPixel(vector2(x,size.y - 1), p1);
+                }
+
+            
             return RE; 
         }
 
@@ -1013,6 +1106,7 @@ namespace WindowManager
 
 
             RenderElement Render(vector2 size) override{
+                
                 EVENT e;
 
                 bool onHighlight = Inside();
@@ -1061,11 +1155,36 @@ namespace WindowManager
                         RE.SetPixel(vector2(x,y), r);
                     }   
                 }
-                
+
+                //Adding border:
+                //vertical
+                for (int y = 0; y < size.y; y++)
+                {
+                    Pixel p0 = RE.GetPixel(vector2(0, y));
+                    Pixel p1 = RE.GetPixel(vector2(size.x - 1, y));
+
+                    p0.ch = '|';
+                    p1.ch = '|';
+
+                    RE.SetPixel(vector2(0,y), p0); 
+                    RE.SetPixel(vector2(size.x - 1,y), p1); 
+                }
+
+                //horizontal
+                for (int x = 0; x < size.x; x++)
+                {
+                    Pixel p0 = RE.GetPixel(vector2(x,0));
+                    Pixel p1 = RE.GetPixel(vector2(x, size.y - 1));
+
+                    p0.ch = '-';
+                    p1.ch = '-';
+
+                    RE.SetPixel(vector2(x,0), p0);
+                    RE.SetPixel(vector2(x,size.y - 1), p1);
+                }
                 return RE; 
             }
          
-
         private:
             CallbackFunction callback_;
             EVENT lastEvent = EVENT::BEGINNING;
@@ -1074,11 +1193,7 @@ namespace WindowManager
     class Checkbox : public Element{
         public:
 
-            std::map<int, std::string> CustomStates = {
-            };
-
-            std::map<std::string, std::string> CustomAttributes = {                
-            };
+            std::map<int, std::string> CustomStates = {};
 
             using CallbackFunction = std::function<void()>;
             using CallbackFunctionClass = std::function<void(Checkbox&)>;
@@ -1097,12 +1212,6 @@ namespace WindowManager
                 CustomStates.emplace(state, css);
                 states.push_back(2);
             }
-
-            void AddCustomAttribute(std::string name, std::string data){ 
-                CustomAttributes.emplace(name, data);
-                states.push_back(2);
-            }
-
 
             int state = 0;
             int lastState = states[0];
@@ -1165,8 +1274,6 @@ namespace WindowManager
             void toggle(){
                 AddToState();
             }
-            
-            
 
             void AddToState(){
 
@@ -1176,12 +1283,12 @@ namespace WindowManager
 
                 for (Checkbox* togglePtr : friends)
                 {
-                    togglePtr->SubstractFromState();
+                    togglePtr->SubstractFromState(state);
                 }
             }
 
-            void SubstractFromState(){
-                if(state != 0)
+            void SubstractFromState(int s){
+                if(state != 0 && state == s)
                     state -= 1;
                 
             }
@@ -1214,8 +1321,6 @@ namespace WindowManager
                 }
             }
 
-            
-
             void setOnClick(CallbackFunction callback) {
                 onClickCallback_ = callback;
             }
@@ -1226,6 +1331,7 @@ namespace WindowManager
 
 
             RenderElement Render(vector2 size) override{
+                
                 EVENT e;
                 bool eventDifference =false;
                 bool onHighlight = Inside();
@@ -1253,16 +1359,15 @@ namespace WindowManager
 
                 if (state != lastState || lastEvent != e)
                 {
-
                     if(state != lastState){
+                        clog << "callback" << (bool)onStateChangeCallback_ << std::endl;
                         if (onStateChangeCallback_)                      
                             onStateChangeCallback_(*this);
                     }
 
                     std::string current_css;
 
-
-                    if (state == 0 && onHighlight)
+                    if (state == 0 && onHighlight && css_events.find(EVENT::HOVER)->second != "")
                     {
                         current_css = css_events.find(EVENT::HOVER)->second;
                     }
@@ -1271,6 +1376,9 @@ namespace WindowManager
                     }
                     else if(state == 1){
                         current_css = css_events.find(EVENT::ACTIVE)->second;
+                    }
+                    else if(state == 0 && onHighlight && css_events.find(EVENT::HOVER)->second == ""){
+                        current_css = css_events.find(EVENT::NONE)->second;
                     }
                     else{
                         current_css = CustomStates.find(state)->second;
@@ -1305,8 +1413,34 @@ namespace WindowManager
                     }   
                 }  
 
+                //Adding border:
+                //vertical
+                for (int y = 0; y < size.y; y++)
+                {
+                    Pixel p0 = RE.GetPixel(vector2(0, y));
+                    Pixel p1 = RE.GetPixel(vector2(size.x - 1, y));
+
+                    p0.ch = '|';
+                    p1.ch = '|';
+
+                    RE.SetPixel(vector2(0,y), p0); 
+                    RE.SetPixel(vector2(size.x - 1,y), p1); 
+                }
+
+                //horizontal
+                for (int x = 0; x < size.x; x++)
+                {
+                    Pixel p0 = RE.GetPixel(vector2(x,0));
+                    Pixel p1 = RE.GetPixel(vector2(x, size.y - 1));
+
+                    p0.ch = '-';
+                    p1.ch = '-';
+
+                    RE.SetPixel(vector2(x,0), p0);
+                    RE.SetPixel(vector2(x,size.y - 1), p1);
+                }
                 return RE; 
-            }
+                }
          
 
         private:
@@ -1415,6 +1549,7 @@ namespace WindowManager
         }
 
         RenderElement Render(vector2 size){
+            
             RenderElement window = RenderElement(size, ' ', bg);
             
             // Remember to make optimations for this, so if nothing moves it should not generate everything from start, only thigns tthat changes
@@ -1424,6 +1559,7 @@ namespace WindowManager
                 
                 if (!elements[i]->OverrideCss && !elements[i]->css_is_up_to_date)
                 {
+                    //std::cout << "id: " << elements[i]->id << std::endl; 
                     elements[i]->SetCss(findCssById(FullCss, elements[i]->id)); 
                     elements[i]->ParseCss(EVENT::NONE);
                 }
@@ -1436,7 +1572,9 @@ namespace WindowManager
                 RenderElement e1 = elements[i]->Render(siz);
                 window = CombineRenderElements(window, e1, pos);
                 
+                
             }
+            
             return window;
         }
 
@@ -1458,10 +1596,6 @@ namespace WindowManager
                 //CLEAR_TERMINAL();
             }
 
-            
-
-            //std::vector<Window> windows = *this;
-
             RenderElement screen(size, ' ');
 
             for (int i = 0; i < this->size(); i++)
@@ -1471,8 +1605,6 @@ namespace WindowManager
                     (*this)[i]->SetCss(findCssById(FullCss, (*this)[i]->id)); 
                     (*this)[i]->ParseCss(EVENT::NONE);
                 }
-
-                
 
                 vector2 siz = (*this).at(i)->size;
                 vector2 pos = (*this).at(i)->position;

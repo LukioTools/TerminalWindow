@@ -49,35 +49,25 @@
     height: 100%;
 }
 
-#cam1:hover{
-    background-color: (255,0,0);
-}
-
 #cam1:active{
     background-color: (0,255,0);
-}
-
-#cam2:hover{
-    background-color: (255,0,0);
 }
 
 #cam2:active{
     background-color: (0,255,0);
 }
 
-#cam3:hover{
-    background-color: (255,0,0);
-}
-
 #cam3:active{
     background-color: (0,255,0);
 }
 
-#cam4:hover{
-    background-color: (255,0,0);
+#cam4:active{
+    background-color: (0,255,0);
 }
 
-#cam4:active{
+
+
+#text_1:active{
     background-color: (0,255,0);
 }
 

@@ -264,8 +264,7 @@ CMakeFiles/main.dir/main.cpp.o: /home/hiha/c++/TallylightSystem/main.cpp \
  /usr/include/c++/13/compare \
  /home/hiha/c++/TallylightSystem/./libs/FileManager.hpp \
  /home/hiha/c++/TallylightSystem/./tcp/tcp.hpp \
- /usr/include/boost/asio.hpp \
- /usr/include/boost/asio/associated_allocator.hpp \
+ /usr/include/boost/asio/ip/udp.hpp \
  /usr/include/boost/asio/detail/config.hpp /usr/include/boost/config.hpp \
  /usr/include/boost/config/user.hpp \
  /usr/include/boost/config/detail/select_compiler_config.hpp \
@@ -279,23 +278,26 @@ CMakeFiles/main.dir/main.cpp.o: /home/hiha/c++/TallylightSystem/main.cpp \
  /usr/include/boost/config/detail/suffix.hpp \
  /usr/include/boost/config/helper_macros.hpp \
  /usr/include/boost/version.hpp /usr/include/linux/version.h \
- /usr/include/c++/13/memory \
+ /usr/include/boost/asio/basic_datagram_socket.hpp \
+ /usr/include/boost/asio/basic_socket.hpp \
+ /usr/include/boost/asio/any_io_executor.hpp \
+ /usr/include/boost/asio/execution.hpp \
+ /usr/include/boost/asio/execution/allocator.hpp \
+ /usr/include/boost/asio/detail/type_traits.hpp \
+ /usr/include/boost/asio/execution/executor.hpp \
+ /usr/include/boost/asio/execution/execute.hpp \
+ /usr/include/boost/asio/execution/detail/as_invocable.hpp \
+ /usr/include/boost/asio/detail/atomic_count.hpp \
+ /usr/include/boost/asio/detail/memory.hpp /usr/include/c++/13/memory \
  /usr/include/c++/13/bits/stl_raw_storage_iter.h \
  /usr/include/c++/13/bits/align.h \
  /usr/include/c++/13/bits/shared_ptr_atomic.h \
  /usr/include/c++/13/backward/auto_ptr.h \
  /usr/include/c++/13/pstl/glue_memory_defs.h \
  /usr/include/c++/13/pstl/execution_defs.h \
- /usr/include/boost/asio/detail/type_traits.hpp \
+ /usr/include/boost/asio/execution/receiver_invocation_error.hpp \
  /usr/include/boost/asio/detail/push_options.hpp \
  /usr/include/boost/asio/detail/pop_options.hpp \
- /usr/include/boost/asio/associated_executor.hpp \
- /usr/include/boost/asio/execution/executor.hpp \
- /usr/include/boost/asio/execution/execute.hpp \
- /usr/include/boost/asio/execution/detail/as_invocable.hpp \
- /usr/include/boost/asio/detail/atomic_count.hpp \
- /usr/include/boost/asio/detail/memory.hpp \
- /usr/include/boost/asio/execution/receiver_invocation_error.hpp \
  /usr/include/boost/asio/execution/impl/receiver_invocation_error.ipp \
  /usr/include/boost/asio/execution/set_done.hpp \
  /usr/include/boost/asio/traits/set_done_member.hpp \
@@ -312,11 +314,6 @@ CMakeFiles/main.dir/main.cpp.o: /home/hiha/c++/TallylightSystem/main.cpp \
  /usr/include/boost/asio/traits/execute_free.hpp \
  /usr/include/boost/asio/execution/invocable_archetype.hpp \
  /usr/include/boost/asio/traits/equality_comparable.hpp \
- /usr/include/boost/asio/is_executor.hpp \
- /usr/include/boost/asio/detail/is_executor.hpp \
- /usr/include/boost/asio/system_executor.hpp \
- /usr/include/boost/asio/execution.hpp \
- /usr/include/boost/asio/execution/allocator.hpp \
  /usr/include/boost/asio/execution/scheduler.hpp \
  /usr/include/boost/asio/execution/schedule.hpp \
  /usr/include/boost/asio/traits/schedule_member.hpp \
@@ -358,6 +355,7 @@ CMakeFiles/main.dir/main.cpp.o: /home/hiha/c++/TallylightSystem/main.cpp \
  /usr/include/boost/asio/detail/thread_info_base.hpp \
  /usr/include/boost/asio/multiple_exceptions.hpp \
  /usr/include/boost/asio/impl/multiple_exceptions.ipp \
+ /usr/include/boost/asio/associated_allocator.hpp \
  /usr/include/boost/asio/handler_alloc_hook.hpp \
  /usr/include/boost/asio/impl/handler_alloc_hook.ipp \
  /usr/include/boost/asio/detail/non_const_lvalue.hpp \
@@ -440,6 +438,22 @@ CMakeFiles/main.dir/main.cpp.o: /home/hiha/c++/TallylightSystem/main.cpp \
  /usr/include/boost/asio/execution/detail/submit_receiver.hpp \
  /usr/include/boost/asio/traits/submit_member.hpp \
  /usr/include/boost/asio/traits/submit_free.hpp \
+ /usr/include/boost/asio/execution_context.hpp \
+ /usr/include/boost/asio/impl/execution_context.hpp \
+ /usr/include/boost/asio/detail/handler_type_requirements.hpp \
+ /usr/include/boost/asio/async_result.hpp \
+ /usr/include/boost/asio/detail/service_registry.hpp \
+ /usr/include/boost/asio/detail/impl/service_registry.hpp \
+ /usr/include/boost/asio/detail/impl/service_registry.ipp \
+ /usr/include/boost/asio/impl/execution_context.ipp \
+ /usr/include/boost/asio/detail/io_object_impl.hpp \
+ /usr/include/boost/asio/io_context.hpp \
+ /usr/include/boost/asio/detail/wrapped_handler.hpp \
+ /usr/include/boost/asio/detail/bind_handler.hpp \
+ /usr/include/boost/asio/associated_executor.hpp \
+ /usr/include/boost/asio/is_executor.hpp \
+ /usr/include/boost/asio/detail/is_executor.hpp \
+ /usr/include/boost/asio/system_executor.hpp \
  /usr/include/boost/asio/impl/system_executor.hpp \
  /usr/include/boost/asio/detail/executor_op.hpp \
  /usr/include/boost/asio/detail/fenced_block.hpp \
@@ -454,14 +468,6 @@ CMakeFiles/main.dir/main.cpp.o: /home/hiha/c++/TallylightSystem/main.cpp \
  /usr/include/boost/asio/detail/posix_global.hpp \
  /usr/include/boost/asio/system_context.hpp \
  /usr/include/boost/asio/detail/scheduler.hpp \
- /usr/include/boost/asio/execution_context.hpp \
- /usr/include/boost/asio/impl/execution_context.hpp \
- /usr/include/boost/asio/detail/handler_type_requirements.hpp \
- /usr/include/boost/asio/async_result.hpp \
- /usr/include/boost/asio/detail/service_registry.hpp \
- /usr/include/boost/asio/detail/impl/service_registry.hpp \
- /usr/include/boost/asio/detail/impl/service_registry.ipp \
- /usr/include/boost/asio/impl/execution_context.ipp \
  /usr/include/boost/asio/detail/conditionally_enabled_event.hpp \
  /usr/include/boost/asio/detail/conditionally_enabled_mutex.hpp \
  /usr/include/boost/asio/detail/null_event.hpp \
@@ -538,14 +544,6 @@ CMakeFiles/main.dir/main.cpp.o: /home/hiha/c++/TallylightSystem/main.cpp \
  /usr/include/boost/asio/detail/thread_group.hpp \
  /usr/include/boost/asio/impl/system_context.hpp \
  /usr/include/boost/asio/impl/system_context.ipp \
- /usr/include/boost/asio/awaitable.hpp \
- /usr/include/boost/asio/basic_datagram_socket.hpp \
- /usr/include/boost/asio/basic_socket.hpp \
- /usr/include/boost/asio/any_io_executor.hpp \
- /usr/include/boost/asio/detail/io_object_impl.hpp \
- /usr/include/boost/asio/io_context.hpp \
- /usr/include/boost/asio/detail/wrapped_handler.hpp \
- /usr/include/boost/asio/detail/bind_handler.hpp \
  /usr/include/boost/asio/detail/handler_cont_helpers.hpp \
  /usr/include/boost/asio/handler_continuation_hook.hpp \
  /usr/include/boost/asio/detail/chrono.hpp /usr/include/c++/13/chrono \
@@ -581,6 +579,177 @@ CMakeFiles/main.dir/main.cpp.o: /home/hiha/c++/TallylightSystem/main.cpp \
  /usr/include/boost/asio/detail/reactive_socket_send_op.hpp \
  /usr/include/boost/asio/detail/reactive_wait_op.hpp \
  /usr/include/boost/asio/detail/impl/reactive_socket_service_base.ipp \
+ /usr/include/boost/asio/ip/basic_endpoint.hpp \
+ /usr/include/boost/asio/ip/address.hpp \
+ /usr/include/boost/asio/ip/address_v4.hpp \
+ /usr/include/boost/asio/detail/array.hpp \
+ /usr/include/boost/asio/detail/winsock_init.hpp \
+ /usr/include/boost/asio/ip/impl/address_v4.hpp \
+ /usr/include/boost/asio/ip/impl/address_v4.ipp \
+ /usr/include/boost/asio/ip/address_v6.hpp \
+ /usr/include/boost/asio/ip/impl/address_v6.hpp \
+ /usr/include/boost/asio/ip/impl/address_v6.ipp \
+ /usr/include/boost/asio/ip/bad_address_cast.hpp \
+ /usr/include/boost/asio/ip/impl/address.hpp \
+ /usr/include/boost/asio/ip/impl/address.ipp \
+ /usr/include/boost/asio/ip/detail/endpoint.hpp \
+ /usr/include/boost/asio/ip/detail/impl/endpoint.ipp \
+ /usr/include/boost/asio/ip/impl/basic_endpoint.hpp \
+ /usr/include/boost/asio/ip/basic_resolver.hpp \
+ /usr/include/boost/asio/ip/basic_resolver_iterator.hpp \
+ /usr/include/c++/13/iterator /usr/include/c++/13/bits/stream_iterator.h \
+ /usr/include/boost/asio/ip/basic_resolver_entry.hpp \
+ /usr/include/boost/asio/ip/basic_resolver_query.hpp \
+ /usr/include/boost/asio/ip/resolver_query_base.hpp \
+ /usr/include/boost/asio/ip/resolver_base.hpp \
+ /usr/include/boost/asio/ip/basic_resolver_results.hpp \
+ /usr/include/boost/asio/detail/resolver_service.hpp \
+ /usr/include/boost/asio/detail/resolve_endpoint_op.hpp \
+ /usr/include/boost/asio/detail/resolve_op.hpp \
+ /usr/include/boost/asio/detail/resolve_query_op.hpp \
+ /usr/include/boost/asio/detail/resolver_service_base.hpp \
+ /usr/include/boost/asio/detail/impl/resolver_service_base.ipp \
+ /usr/include/boost/asio/read_until.hpp \
+ /usr/include/boost/asio/detail/regex_fwd.hpp \
+ /usr/include/boost/regex_fwd.hpp /usr/include/boost/regex/config.hpp \
+ /usr/include/boost/regex/user.hpp /usr/include/boost/predef.h \
+ /usr/include/boost/predef/language.h \
+ /usr/include/boost/predef/language/stdc.h \
+ /usr/include/boost/predef/version_number.h \
+ /usr/include/boost/predef/make.h /usr/include/boost/predef/detail/test.h \
+ /usr/include/boost/predef/language/stdcpp.h \
+ /usr/include/boost/predef/language/objc.h \
+ /usr/include/boost/predef/language/cuda.h \
+ /usr/include/boost/predef/architecture.h \
+ /usr/include/boost/predef/architecture/alpha.h \
+ /usr/include/boost/predef/architecture/arm.h \
+ /usr/include/boost/predef/architecture/blackfin.h \
+ /usr/include/boost/predef/architecture/convex.h \
+ /usr/include/boost/predef/architecture/ia64.h \
+ /usr/include/boost/predef/architecture/m68k.h \
+ /usr/include/boost/predef/architecture/mips.h \
+ /usr/include/boost/predef/architecture/parisc.h \
+ /usr/include/boost/predef/architecture/ppc.h \
+ /usr/include/boost/predef/architecture/ptx.h \
+ /usr/include/boost/predef/architecture/pyramid.h \
+ /usr/include/boost/predef/architecture/riscv.h \
+ /usr/include/boost/predef/architecture/rs6k.h \
+ /usr/include/boost/predef/architecture/sparc.h \
+ /usr/include/boost/predef/architecture/superh.h \
+ /usr/include/boost/predef/architecture/sys370.h \
+ /usr/include/boost/predef/architecture/sys390.h \
+ /usr/include/boost/predef/architecture/x86.h \
+ /usr/include/boost/predef/architecture/x86/32.h \
+ /usr/include/boost/predef/architecture/x86/64.h \
+ /usr/include/boost/predef/architecture/z.h \
+ /usr/include/boost/predef/compiler.h \
+ /usr/include/boost/predef/compiler/borland.h \
+ /usr/include/boost/predef/compiler/clang.h \
+ /usr/include/boost/predef/compiler/comeau.h \
+ /usr/include/boost/predef/compiler/compaq.h \
+ /usr/include/boost/predef/compiler/diab.h \
+ /usr/include/boost/predef/compiler/digitalmars.h \
+ /usr/include/boost/predef/compiler/dignus.h \
+ /usr/include/boost/predef/compiler/edg.h \
+ /usr/include/boost/predef/compiler/ekopath.h \
+ /usr/include/boost/predef/compiler/gcc_xml.h \
+ /usr/include/boost/predef/compiler/gcc.h \
+ /usr/include/boost/predef/detail/comp_detected.h \
+ /usr/include/boost/predef/compiler/greenhills.h \
+ /usr/include/boost/predef/compiler/hp_acc.h \
+ /usr/include/boost/predef/compiler/iar.h \
+ /usr/include/boost/predef/compiler/ibm.h \
+ /usr/include/boost/predef/compiler/intel.h \
+ /usr/include/boost/predef/compiler/kai.h \
+ /usr/include/boost/predef/compiler/llvm.h \
+ /usr/include/boost/predef/compiler/metaware.h \
+ /usr/include/boost/predef/compiler/metrowerks.h \
+ /usr/include/boost/predef/compiler/microtec.h \
+ /usr/include/boost/predef/compiler/mpw.h \
+ /usr/include/boost/predef/compiler/nvcc.h \
+ /usr/include/boost/predef/compiler/palm.h \
+ /usr/include/boost/predef/compiler/pgi.h \
+ /usr/include/boost/predef/compiler/sgi_mipspro.h \
+ /usr/include/boost/predef/compiler/sunpro.h \
+ /usr/include/boost/predef/compiler/tendra.h \
+ /usr/include/boost/predef/compiler/visualc.h \
+ /usr/include/boost/predef/compiler/watcom.h \
+ /usr/include/boost/predef/library.h \
+ /usr/include/boost/predef/library/c.h \
+ /usr/include/boost/predef/library/c/_prefix.h \
+ /usr/include/boost/predef/detail/_cassert.h \
+ /usr/include/boost/predef/library/c/cloudabi.h \
+ /usr/include/boost/predef/library/c/gnu.h \
+ /usr/include/boost/predef/library/c/uc.h \
+ /usr/include/boost/predef/library/c/vms.h \
+ /usr/include/boost/predef/library/c/zos.h \
+ /usr/include/boost/predef/library/std.h \
+ /usr/include/boost/predef/library/std/_prefix.h \
+ /usr/include/boost/predef/detail/_exception.h \
+ /usr/include/boost/predef/library/std/cxx.h \
+ /usr/include/boost/predef/library/std/dinkumware.h \
+ /usr/include/boost/predef/library/std/libcomo.h \
+ /usr/include/boost/predef/library/std/modena.h \
+ /usr/include/boost/predef/library/std/msl.h \
+ /usr/include/boost/predef/library/std/roguewave.h \
+ /usr/include/boost/predef/library/std/sgi.h \
+ /usr/include/boost/predef/library/std/stdcpp3.h \
+ /usr/include/boost/predef/library/std/stlport.h \
+ /usr/include/boost/predef/library/std/vacpp.h \
+ /usr/include/boost/predef/os.h /usr/include/boost/predef/os/aix.h \
+ /usr/include/boost/predef/os/amigaos.h \
+ /usr/include/boost/predef/os/beos.h /usr/include/boost/predef/os/bsd.h \
+ /usr/include/boost/predef/os/macos.h /usr/include/boost/predef/os/ios.h \
+ /usr/include/boost/predef/os/bsd/bsdi.h \
+ /usr/include/boost/predef/os/bsd/dragonfly.h \
+ /usr/include/boost/predef/os/bsd/free.h \
+ /usr/include/boost/predef/os/bsd/open.h \
+ /usr/include/boost/predef/os/bsd/net.h \
+ /usr/include/boost/predef/os/cygwin.h \
+ /usr/include/boost/predef/os/haiku.h /usr/include/boost/predef/os/hpux.h \
+ /usr/include/boost/predef/os/irix.h /usr/include/boost/predef/os/linux.h \
+ /usr/include/boost/predef/detail/os_detected.h \
+ /usr/include/boost/predef/os/os400.h \
+ /usr/include/boost/predef/os/qnxnto.h \
+ /usr/include/boost/predef/os/solaris.h \
+ /usr/include/boost/predef/os/unix.h /usr/include/boost/predef/os/vms.h \
+ /usr/include/boost/predef/os/windows.h /usr/include/boost/predef/other.h \
+ /usr/include/boost/predef/other/endian.h \
+ /usr/include/boost/predef/platform/android.h \
+ /usr/include/boost/predef/platform.h \
+ /usr/include/boost/predef/platform/cloudabi.h \
+ /usr/include/boost/predef/platform/mingw.h \
+ /usr/include/boost/predef/platform/mingw32.h \
+ /usr/include/boost/predef/platform/mingw64.h \
+ /usr/include/boost/predef/platform/windows_uwp.h \
+ /usr/include/boost/predef/platform/windows_desktop.h \
+ /usr/include/boost/predef/platform/windows_phone.h \
+ /usr/include/boost/predef/platform/windows_server.h \
+ /usr/include/boost/predef/platform/windows_store.h \
+ /usr/include/boost/predef/platform/windows_system.h \
+ /usr/include/boost/predef/platform/windows_runtime.h \
+ /usr/include/boost/predef/platform/ios.h \
+ /usr/include/boost/predef/hardware.h \
+ /usr/include/boost/predef/hardware/simd.h \
+ /usr/include/boost/predef/hardware/simd/x86.h \
+ /usr/include/boost/predef/hardware/simd/x86/versions.h \
+ /usr/include/boost/predef/hardware/simd/x86_amd.h \
+ /usr/include/boost/predef/hardware/simd/x86_amd/versions.h \
+ /usr/include/boost/predef/hardware/simd/arm.h \
+ /usr/include/boost/predef/hardware/simd/arm/versions.h \
+ /usr/include/boost/predef/hardware/simd/ppc.h \
+ /usr/include/boost/predef/hardware/simd/ppc/versions.h \
+ /usr/include/boost/predef/version.h \
+ /usr/include/boost/regex/config/cwchar.hpp \
+ /usr/include/boost/config/auto_link.hpp \
+ /usr/include/boost/regex/v4/regex_fwd.hpp \
+ /usr/include/boost/regex/v4/match_flags.hpp \
+ /usr/include/boost/asio/basic_streambuf_fwd.hpp \
+ /usr/include/boost/asio/impl/read_until.hpp \
+ /usr/include/c++/13/algorithm \
+ /usr/include/c++/13/pstl/glue_algorithm_defs.h \
+ /usr/include/boost/asio/buffers_iterator.hpp /usr/include/boost/asio.hpp \
+ /usr/include/boost/asio/awaitable.hpp \
  /usr/include/boost/asio/basic_deadline_timer.hpp \
  /usr/include/boost/asio/detail/deadline_timer_service.hpp \
  /usr/include/boost/asio/detail/timer_queue.hpp \
@@ -592,7 +761,6 @@ CMakeFiles/main.dir/main.cpp.o: /home/hiha/c++/TallylightSystem/main.cpp \
  /usr/include/boost/date_time/c_time.hpp \
  /usr/include/boost/date_time/compiler_config.hpp \
  /usr/include/boost/date_time/locale_config.hpp \
- /usr/include/boost/config/auto_link.hpp \
  /usr/include/x86_64-linux-gnu/sys/time.h \
  /usr/include/boost/shared_ptr.hpp \
  /usr/include/boost/smart_ptr/shared_ptr.hpp \
@@ -618,8 +786,6 @@ CMakeFiles/main.dir/main.cpp.o: /home/hiha/c++/TallylightSystem/main.cpp \
  /usr/include/boost/smart_ptr/detail/sp_thread_pause.hpp \
  /usr/include/boost/smart_ptr/detail/sp_thread_sleep.hpp \
  /usr/include/boost/config/pragma_message.hpp \
- /usr/include/c++/13/algorithm \
- /usr/include/c++/13/pstl/glue_algorithm_defs.h \
  /usr/include/boost/smart_ptr/detail/operator_bool.hpp \
  /usr/include/boost/smart_ptr/detail/local_sp_deleter.hpp \
  /usr/include/boost/smart_ptr/detail/local_counted_base.hpp \
@@ -632,9 +798,7 @@ CMakeFiles/main.dir/main.cpp.o: /home/hiha/c++/TallylightSystem/main.cpp \
  /usr/include/boost/core/enable_if.hpp \
  /usr/include/boost/date_time/special_defs.hpp \
  /usr/include/boost/date_time/time_defs.hpp \
- /usr/include/boost/operators.hpp /usr/include/c++/13/iterator \
- /usr/include/c++/13/bits/stream_iterator.h \
- /usr/include/boost/static_assert.hpp \
+ /usr/include/boost/operators.hpp /usr/include/boost/static_assert.hpp \
  /usr/include/boost/type_traits/is_integral.hpp \
  /usr/include/boost/type_traits/integral_constant.hpp \
  /usr/include/boost/date_time/time_resolution_traits.hpp \
@@ -863,7 +1027,6 @@ CMakeFiles/main.dir/main.cpp.o: /home/hiha/c++/TallylightSystem/main.cpp \
  /usr/include/boost/asio/detail/chrono_time_traits.hpp \
  /usr/include/boost/asio/wait_traits.hpp \
  /usr/include/boost/asio/basic_streambuf.hpp \
- /usr/include/boost/asio/basic_streambuf_fwd.hpp \
  /usr/include/boost/asio/bind_executor.hpp \
  /usr/include/boost/asio/uses_executor.hpp \
  /usr/include/boost/asio/buffered_read_stream_fwd.hpp \
@@ -881,7 +1044,6 @@ CMakeFiles/main.dir/main.cpp.o: /home/hiha/c++/TallylightSystem/main.cpp \
  /usr/include/boost/asio/detail/consuming_buffers.hpp \
  /usr/include/boost/asio/detail/dependent_type.hpp \
  /usr/include/boost/asio/impl/buffered_write_stream.hpp \
- /usr/include/boost/asio/buffers_iterator.hpp \
  /usr/include/boost/asio/co_spawn.hpp /usr/include/boost/asio/compose.hpp \
  /usr/include/boost/asio/impl/compose.hpp \
  /usr/include/boost/asio/connect.hpp \
@@ -910,18 +1072,6 @@ CMakeFiles/main.dir/main.cpp.o: /home/hiha/c++/TallylightSystem/main.cpp \
  /usr/include/boost/asio/detail/impl/strand_service.ipp \
  /usr/include/boost/asio/io_service.hpp \
  /usr/include/boost/asio/io_service_strand.hpp \
- /usr/include/boost/asio/ip/address.hpp \
- /usr/include/boost/asio/ip/address_v4.hpp \
- /usr/include/boost/asio/detail/array.hpp \
- /usr/include/boost/asio/detail/winsock_init.hpp \
- /usr/include/boost/asio/ip/impl/address_v4.hpp \
- /usr/include/boost/asio/ip/impl/address_v4.ipp \
- /usr/include/boost/asio/ip/address_v6.hpp \
- /usr/include/boost/asio/ip/impl/address_v6.hpp \
- /usr/include/boost/asio/ip/impl/address_v6.ipp \
- /usr/include/boost/asio/ip/bad_address_cast.hpp \
- /usr/include/boost/asio/ip/impl/address.hpp \
- /usr/include/boost/asio/ip/impl/address.ipp \
  /usr/include/boost/asio/ip/address_v4_iterator.hpp \
  /usr/include/boost/asio/ip/address_v4_range.hpp \
  /usr/include/boost/asio/ip/address_v6_iterator.hpp \
@@ -932,29 +1082,12 @@ CMakeFiles/main.dir/main.cpp.o: /home/hiha/c++/TallylightSystem/main.cpp \
  /usr/include/boost/asio/ip/network_v6.hpp \
  /usr/include/boost/asio/ip/impl/network_v6.hpp \
  /usr/include/boost/asio/ip/impl/network_v6.ipp \
- /usr/include/boost/asio/ip/basic_endpoint.hpp \
- /usr/include/boost/asio/ip/detail/endpoint.hpp \
- /usr/include/boost/asio/ip/detail/impl/endpoint.ipp \
- /usr/include/boost/asio/ip/impl/basic_endpoint.hpp \
- /usr/include/boost/asio/ip/basic_resolver.hpp \
- /usr/include/boost/asio/ip/basic_resolver_iterator.hpp \
- /usr/include/boost/asio/ip/basic_resolver_entry.hpp \
- /usr/include/boost/asio/ip/basic_resolver_query.hpp \
- /usr/include/boost/asio/ip/resolver_query_base.hpp \
- /usr/include/boost/asio/ip/resolver_base.hpp \
- /usr/include/boost/asio/ip/basic_resolver_results.hpp \
- /usr/include/boost/asio/detail/resolver_service.hpp \
- /usr/include/boost/asio/detail/resolve_endpoint_op.hpp \
- /usr/include/boost/asio/detail/resolve_op.hpp \
- /usr/include/boost/asio/detail/resolve_query_op.hpp \
- /usr/include/boost/asio/detail/resolver_service_base.hpp \
- /usr/include/boost/asio/detail/impl/resolver_service_base.ipp \
  /usr/include/boost/asio/ip/host_name.hpp \
  /usr/include/boost/asio/ip/impl/host_name.ipp \
  /usr/include/boost/asio/ip/icmp.hpp \
  /usr/include/boost/asio/ip/multicast.hpp \
  /usr/include/boost/asio/ip/detail/socket_option.hpp \
- /usr/include/boost/asio/ip/tcp.hpp /usr/include/boost/asio/ip/udp.hpp \
+ /usr/include/boost/asio/ip/tcp.hpp \
  /usr/include/boost/asio/ip/unicast.hpp \
  /usr/include/boost/asio/ip/v6_only.hpp \
  /usr/include/boost/asio/is_read_buffered.hpp \
@@ -978,141 +1111,6 @@ CMakeFiles/main.dir/main.cpp.o: /home/hiha/c++/TallylightSystem/main.cpp \
  /usr/include/boost/asio/read.hpp /usr/include/boost/asio/impl/read.hpp \
  /usr/include/boost/asio/read_at.hpp \
  /usr/include/boost/asio/impl/read_at.hpp \
- /usr/include/boost/asio/read_until.hpp \
- /usr/include/boost/asio/detail/regex_fwd.hpp \
- /usr/include/boost/regex_fwd.hpp /usr/include/boost/regex/config.hpp \
- /usr/include/boost/regex/user.hpp /usr/include/boost/predef.h \
- /usr/include/boost/predef/language.h \
- /usr/include/boost/predef/language/stdc.h \
- /usr/include/boost/predef/version_number.h \
- /usr/include/boost/predef/make.h /usr/include/boost/predef/detail/test.h \
- /usr/include/boost/predef/language/stdcpp.h \
- /usr/include/boost/predef/language/objc.h \
- /usr/include/boost/predef/language/cuda.h \
- /usr/include/boost/predef/architecture.h \
- /usr/include/boost/predef/architecture/alpha.h \
- /usr/include/boost/predef/architecture/arm.h \
- /usr/include/boost/predef/architecture/blackfin.h \
- /usr/include/boost/predef/architecture/convex.h \
- /usr/include/boost/predef/architecture/ia64.h \
- /usr/include/boost/predef/architecture/m68k.h \
- /usr/include/boost/predef/architecture/mips.h \
- /usr/include/boost/predef/architecture/parisc.h \
- /usr/include/boost/predef/architecture/ppc.h \
- /usr/include/boost/predef/architecture/ptx.h \
- /usr/include/boost/predef/architecture/pyramid.h \
- /usr/include/boost/predef/architecture/riscv.h \
- /usr/include/boost/predef/architecture/rs6k.h \
- /usr/include/boost/predef/architecture/sparc.h \
- /usr/include/boost/predef/architecture/superh.h \
- /usr/include/boost/predef/architecture/sys370.h \
- /usr/include/boost/predef/architecture/sys390.h \
- /usr/include/boost/predef/architecture/x86.h \
- /usr/include/boost/predef/architecture/x86/32.h \
- /usr/include/boost/predef/architecture/x86/64.h \
- /usr/include/boost/predef/architecture/z.h \
- /usr/include/boost/predef/compiler.h \
- /usr/include/boost/predef/compiler/borland.h \
- /usr/include/boost/predef/compiler/clang.h \
- /usr/include/boost/predef/compiler/comeau.h \
- /usr/include/boost/predef/compiler/compaq.h \
- /usr/include/boost/predef/compiler/diab.h \
- /usr/include/boost/predef/compiler/digitalmars.h \
- /usr/include/boost/predef/compiler/dignus.h \
- /usr/include/boost/predef/compiler/edg.h \
- /usr/include/boost/predef/compiler/ekopath.h \
- /usr/include/boost/predef/compiler/gcc_xml.h \
- /usr/include/boost/predef/compiler/gcc.h \
- /usr/include/boost/predef/detail/comp_detected.h \
- /usr/include/boost/predef/compiler/greenhills.h \
- /usr/include/boost/predef/compiler/hp_acc.h \
- /usr/include/boost/predef/compiler/iar.h \
- /usr/include/boost/predef/compiler/ibm.h \
- /usr/include/boost/predef/compiler/intel.h \
- /usr/include/boost/predef/compiler/kai.h \
- /usr/include/boost/predef/compiler/llvm.h \
- /usr/include/boost/predef/compiler/metaware.h \
- /usr/include/boost/predef/compiler/metrowerks.h \
- /usr/include/boost/predef/compiler/microtec.h \
- /usr/include/boost/predef/compiler/mpw.h \
- /usr/include/boost/predef/compiler/nvcc.h \
- /usr/include/boost/predef/compiler/palm.h \
- /usr/include/boost/predef/compiler/pgi.h \
- /usr/include/boost/predef/compiler/sgi_mipspro.h \
- /usr/include/boost/predef/compiler/sunpro.h \
- /usr/include/boost/predef/compiler/tendra.h \
- /usr/include/boost/predef/compiler/visualc.h \
- /usr/include/boost/predef/compiler/watcom.h \
- /usr/include/boost/predef/library.h \
- /usr/include/boost/predef/library/c.h \
- /usr/include/boost/predef/library/c/_prefix.h \
- /usr/include/boost/predef/detail/_cassert.h \
- /usr/include/boost/predef/library/c/cloudabi.h \
- /usr/include/boost/predef/library/c/gnu.h \
- /usr/include/boost/predef/library/c/uc.h \
- /usr/include/boost/predef/library/c/vms.h \
- /usr/include/boost/predef/library/c/zos.h \
- /usr/include/boost/predef/library/std.h \
- /usr/include/boost/predef/library/std/_prefix.h \
- /usr/include/boost/predef/detail/_exception.h \
- /usr/include/boost/predef/library/std/cxx.h \
- /usr/include/boost/predef/library/std/dinkumware.h \
- /usr/include/boost/predef/library/std/libcomo.h \
- /usr/include/boost/predef/library/std/modena.h \
- /usr/include/boost/predef/library/std/msl.h \
- /usr/include/boost/predef/library/std/roguewave.h \
- /usr/include/boost/predef/library/std/sgi.h \
- /usr/include/boost/predef/library/std/stdcpp3.h \
- /usr/include/boost/predef/library/std/stlport.h \
- /usr/include/boost/predef/library/std/vacpp.h \
- /usr/include/boost/predef/os.h /usr/include/boost/predef/os/aix.h \
- /usr/include/boost/predef/os/amigaos.h \
- /usr/include/boost/predef/os/beos.h /usr/include/boost/predef/os/bsd.h \
- /usr/include/boost/predef/os/macos.h /usr/include/boost/predef/os/ios.h \
- /usr/include/boost/predef/os/bsd/bsdi.h \
- /usr/include/boost/predef/os/bsd/dragonfly.h \
- /usr/include/boost/predef/os/bsd/free.h \
- /usr/include/boost/predef/os/bsd/open.h \
- /usr/include/boost/predef/os/bsd/net.h \
- /usr/include/boost/predef/os/cygwin.h \
- /usr/include/boost/predef/os/haiku.h /usr/include/boost/predef/os/hpux.h \
- /usr/include/boost/predef/os/irix.h /usr/include/boost/predef/os/linux.h \
- /usr/include/boost/predef/detail/os_detected.h \
- /usr/include/boost/predef/os/os400.h \
- /usr/include/boost/predef/os/qnxnto.h \
- /usr/include/boost/predef/os/solaris.h \
- /usr/include/boost/predef/os/unix.h /usr/include/boost/predef/os/vms.h \
- /usr/include/boost/predef/os/windows.h /usr/include/boost/predef/other.h \
- /usr/include/boost/predef/other/endian.h \
- /usr/include/boost/predef/platform/android.h \
- /usr/include/boost/predef/platform.h \
- /usr/include/boost/predef/platform/cloudabi.h \
- /usr/include/boost/predef/platform/mingw.h \
- /usr/include/boost/predef/platform/mingw32.h \
- /usr/include/boost/predef/platform/mingw64.h \
- /usr/include/boost/predef/platform/windows_uwp.h \
- /usr/include/boost/predef/platform/windows_desktop.h \
- /usr/include/boost/predef/platform/windows_phone.h \
- /usr/include/boost/predef/platform/windows_server.h \
- /usr/include/boost/predef/platform/windows_store.h \
- /usr/include/boost/predef/platform/windows_system.h \
- /usr/include/boost/predef/platform/windows_runtime.h \
- /usr/include/boost/predef/platform/ios.h \
- /usr/include/boost/predef/hardware.h \
- /usr/include/boost/predef/hardware/simd.h \
- /usr/include/boost/predef/hardware/simd/x86.h \
- /usr/include/boost/predef/hardware/simd/x86/versions.h \
- /usr/include/boost/predef/hardware/simd/x86_amd.h \
- /usr/include/boost/predef/hardware/simd/x86_amd/versions.h \
- /usr/include/boost/predef/hardware/simd/arm.h \
- /usr/include/boost/predef/hardware/simd/arm/versions.h \
- /usr/include/boost/predef/hardware/simd/ppc.h \
- /usr/include/boost/predef/hardware/simd/ppc/versions.h \
- /usr/include/boost/predef/version.h \
- /usr/include/boost/regex/config/cwchar.hpp \
- /usr/include/boost/regex/v4/regex_fwd.hpp \
- /usr/include/boost/regex/v4/match_flags.hpp \
- /usr/include/boost/asio/impl/read_until.hpp \
  /usr/include/boost/asio/redirect_error.hpp \
  /usr/include/boost/asio/impl/redirect_error.hpp \
  /usr/include/boost/asio/require_concept.hpp \
