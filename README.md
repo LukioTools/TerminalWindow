@@ -19,11 +19,11 @@ You should see a popup, and there is your tally name, now i f***d it up and you 
 and you can add up to 4 tally lights, if you need more, just add more WindowManager::Checkbox to toggless vector in main.cpp, and configure it in element.css 
 
 all working css lines are
-top: 0px/%; 
-left: 0px/%; 
-width: 50px/%; 
-height: 50px/%; 
-background-color: (56,32,100); 
+top: 0px/%; <br>
+left: 0px/%; <br>
+width: 50px/%; <br>
+height: 50px/%; <br>
+background-color: (56,32,100); <br>
 :active{} 
 
 if tally light disconnects for some reason like powerloss, it will say -disconnected- and if you get power back on it will automatically connect and the text -disconnected- and it will send current state to the tally light. If you have multiple tallies it will work even if there is more than one client disconnected. It's working based on the name you gave. Yes there is still one problem, if you are having more than one esp with same name, it will override the first connection. just make sure you dont do that :). 
