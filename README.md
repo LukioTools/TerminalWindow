@@ -18,7 +18,7 @@ You should see a popup, and there is your tally name, now i f***d it up and you 
 
 and you can add up to 4 tally lights, if you need more, just add more WindowManager::Checkbox to toggless vector in main.cpp, and configure it in element.css 
 
-all working css lines are
+all working css lines are <br>
 top: 0px/%; <br>
 left: 0px/%; <br>
 width: 50px/%; <br>
