@@ -28,4 +28,4 @@ background-color: (56,32,100); <br>
 
 if tally light disconnects for some reason like powerloss, it will say -disconnected- and if you get power back on it will automatically connect and the text -disconnected- and it will send current state to the tally light. If you have multiple tallies it will work even if there is more than one client disconnected. It's working based on the name you gave. Yes there is still one problem, if you are having more than one esp with same name, it will override the first connection. just make sure you dont do that :). 
 
-I may do a web interface for windows. My dream is to use atem sdk so i can get real time information about the cameras. But the sdk doesn't support linux and i have no clue how it works anyway, and because SKaarhoj doesnt give anymore free api for the Switcher we are fu**d... 
+I may do a web interface for windows. My dream is to use atem sdk so i can get real time information about the cameras. But the sdk doesn't support linux and i have no clue how it works anyway, and because SKaarhoj doesnt give anymore free api for the Switcher so we have no easy way to do this 
