@@ -3,6 +3,7 @@
 #include "./libs/FileManager.hpp"
 #include "./tcp/tcp.hpp"
 #include "libs/queue.hpp"
+#include "./tcp/webServer.hpp"
 //#include "./tcp/socket.hpp"
 
 #include <fstream>
@@ -12,7 +13,7 @@
 
 
 void PrintOnClick(){
-    clog << "button pressed" << std::endl;
+    
 }
 
 std::thread tcp_thread;
@@ -26,10 +27,8 @@ std::vector<WindowManager::Checkbox*> toggless;
 WindowManager::InputField* newClient;
 
 void StateChanged(WindowManager::Checkbox& temp){
-    clog << "state changed" << std::endl;
     auto it = temp.CustomAttributes.find("clientId");
     if (it != temp.CustomAttributes.end()) {
-        clog << "found: " << it->second << std::endl;
         server.ChangeState(std::stoi(it->second), std::to_string(temp.state));
     }
 }
@@ -171,6 +170,19 @@ void OnClientDisconnected(int clientId){
 int main(int argc, char const *argv[])
 {
 
+    Server::Server webServer;
+
+    std::string idx = "/index/";
+
+    webServer.get(idx, [&](Server::req req, Server::res res){
+        res.set_header("Content-Type", "text/plain");
+        res.write("This is a GET request!\n");
+        res.end();
+    });
+
+    std::unique_ptr<std::thread> webThread =  webServer.run(8000);
+
+    //webThread->join();
     
     WindowManager::FullCss = FileManager::readFile("element.css");
 
